@@ -10,16 +10,24 @@ sys.path.insert(
 
 from question_bank import load_questions, get_question, check_answer
 
+from collections import Counter
 
 class QuestionBankTests(unittest.TestCase):
 
     def test_load_questions(self):
         questions = load_questions()
 
-        self.assertGreaterEqual(len(questions), 6)
+        self.assertGreaterEqual(len(questions), 50)
 
         ids = [q["id"] for q in questions]
         self.assertEqual(len(ids), len(set(ids)))
+
+        counts = Counter(q["topic"] for q in questions)
+
+        self.assertEqual(
+            counts,
+            {"S3": 10, "IAM": 10, "Lambda": 10, "EC2": 10, "VPC": 10}
+        )
 
         for question in questions:
             self.assertIn("topic", question)
