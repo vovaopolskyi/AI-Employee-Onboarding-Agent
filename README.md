@@ -260,3 +260,17 @@ Latest local validation: **17 tests passed**.
 - Student progress tracking and lab history.
 - Integration with the deployed Amazon Bedrock AgentCore Runtime.
 ```
+### AWS Lambda Lab Integration Validation
+
+Successfully validated the Lambda configuration lab against a real AWS Lambda function in `eu-central-1`.
+
+- Lambda runtime: Python 3.12
+- Memory: 128 MB
+- Timeout: 10 seconds
+- Function state: Active
+- Execution role: AWS account ownership verified
+- Result: **5/5 checks passed**
+
+The Strands Agent successfully invoked `verify_lambda_lab_task` using Amazon Bedrock Nova Micro and returned the verification results with explanations.
+
+Lambda configuration verification uses read-only AWS API calls. The production AgentCore deployment is pending.
