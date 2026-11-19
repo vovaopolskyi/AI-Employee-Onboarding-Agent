@@ -148,3 +148,15 @@ Replace broad AdministratorAccess with scoped deployment permissions.
 - Do not deploy the current CDK changes while CodeZip drift is unexplained.
 - Validate dependency versions against the lockfile.
 - Keep IAM security changes separate from Python dependency updates.
+## CloudFormation Boundary Deployment Verification
+
+- CloudFormation stack update: UPDATE_COMPLETE
+- Runtime permissions boundary: AWSStudyCoachRuntimeBoundary
+- Deployment approach: boundary-only CloudFormation change set
+- AgentCore post-deployment invocation: HTTP 200
+- Python tool test: add_numbers(a=7, b=5)
+- Agent response: The sum of 7 and 5 is 12.
+- Result: PASSED
+
+Note: The dedicated least-privilege CloudFormation execution role
+has not yet been assigned to the stack.
