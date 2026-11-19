@@ -1,0 +1,73 @@
+
+[
+  {
+    "id": "s3-001",
+    "topic": "S3",
+    "difficulty": "easy",
+    "question": "Which Amazon S3 feature helps recover accidentally deleted objects?",
+    "options": {
+      "A": "Transfer Acceleration",
+      "B": "Versioning",
+      "C": "Static Website Hosting",
+      "D": "Requester Pays"
+    },
+    "answer": "B",
+    "explanation": "S3 Versioning preserves multiple versions of objects, allowing recovery of previous versions."
+  },
+  {
+    "id": "s3-002",
+    "topic": "S3",
+    "difficulty": "easy",
+    "question": "Which S3 storage class is designed for frequently accessed data?",
+    "options": {
+      "A": "S3 Standard",
+      "B": "S3 Glacier Deep Archive",
+      "C": "S3 One Zone-IA",
+      "D": "S3 Glacier Flexible Retrieval"
+    },
+    "answer": "A",
+    "explanation": "S3 Standard is designed for frequently accessed data."
+  },
+  {
+    "id": "s3-003",
+    "topic": "S3",
+    "difficulty": "medium",
+    "question": "Which feature helps prevent public access to S3 buckets?",
+    "options": {
+      "A": "S3 Transfer Acceleration",
+      "B": "S3 Lifecycle",
+      "C": "S3 Block Public Access",
+      "D": "S3 Replication"
+    },
+    "answer": "C",
+    "explanation": "S3 Block Public Access provides settings to restrict public access to buckets and objects."
+  },
+  {
+    "id": "s3-004",
+    "topic": "S3",
+    "difficulty": "medium",
+    "question": "Which feature automatically transitions S3 objects between storage classes based on configured rules?",
+    "options": {
+      "A": "S3 Lifecycle",
+      "B": "S3 Versioning",
+      "C": "S3 Event Notifications",
+      "D": "S3 Object Lock"
+    },
+    "answer": "A",
+    "explanation": "S3 Lifecycle rules can transition objects to other storage classes and expire objects."
+  },
+  {
+    "id": "s3-005",
+    "topic": "S3",
+    "difficulty": "medium",
+    "question": "Which S3 feature helps protect object versions against deletion or overwriting for a specified retention period?",
+    "options": {
+      "A": "S3 Transfer Acceleration",
+      "B": "S3 Object Lock",
+      "C": "S3 Event Notifications",
+      "D": "S3 Intelligent-Tiering"
+    },
+    "answer": "B",
+    "explanation": "S3 Object Lock supports retention periods that protect object versions against deletion or overwriting."
+  }
+]
