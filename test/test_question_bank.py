@@ -14,7 +14,26 @@ from question_bank import load_questions, get_question, check_answer
 class QuestionBankTests(unittest.TestCase):
 
     def test_load_questions(self):
-        self.assertEqual(len(load_questions()), 6)
+        questions = load_questions()
+
+        self.assertGreaterEqual(len(questions), 6)
+
+        ids = [q["id"] for q in questions]
+        self.assertEqual(len(ids), len(set(ids)))
+
+        for question in questions:
+            self.assertIn("topic", question)
+            self.assertIn("difficulty", question)
+            self.assertIn("question", question)
+            self.assertIn("options", question)
+            self.assertIn("answer", question)
+            self.assertIn("explanation", question)
+
+            self.assertEqual(
+                set(question["options"]),
+                {"A", "B", "C", "D"},
+            )
+            self.assertIn(question["answer"], question["options"])
 
     def test_get_s3_question(self):
         question = get_question("S3")
