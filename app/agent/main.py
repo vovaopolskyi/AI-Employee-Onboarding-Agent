@@ -6,6 +6,12 @@ from bedrock_agentcore.runtime import BedrockAgentCoreApp
 from model.load import load_model
 from parse import parse_payload
 from study_materials import search_study_materials
+from practice import (
+    generate_practice_question,
+    check_practice_answer,
+    generate_lab_task,
+    verify_lab_task,
+)
 
 
 DEFAULT_SYSTEM_PROMPT = "You are a helpful assistant. Use tools when appropriate."
@@ -21,6 +27,12 @@ def add_numbers(a: int, b: int) -> int:
 
 tools.append(add_numbers)
 tools.append(search_study_materials)
+tools.extend([
+    generate_practice_question,
+    check_practice_answer,
+    generate_lab_task,
+    verify_lab_task,
+])
 
 def _make_conversation_manager():
     return NullConversationManager()
