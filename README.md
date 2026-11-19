@@ -163,3 +163,100 @@ Run tests: `.\app\agent\.venv\Scripts\python.exe -m unittest discover -s test -p
 
 Cloud integration testing for this new tool is pending.
 
+### AWS S3 Lab Integration Validation
+
+
+## AWS Certification Practice and Hands-on Labs
+
+AWS Study Coach supports both certification practice questions and
+hands-on AWS laboratory exercises with automated verification.
+
+### Practice Questions
+
+The agent provides AWS certification-style questions with multiple-choice
+answers and explanations.
+
+Available tools:
+
+- `generate_practice_question`: Get a practice question by AWS topic.
+- `check_practice_answer`: Check a selected answer and return an explanation.
+
+Currently supported question topics:
+- Amazon S3
+- AWS IAM
+
+Questions are currently curated and predefined. Dynamic question
+generation is planned for a future iteration.
+
+### Hands-on AWS Labs
+
+The agent can assign practical AWS exercises and verify their completion
+using real AWS API calls.
+
+Available tools:
+
+- `generate_lab_task`: Get instructions for an AWS lab.
+- `verify_lab_task`: Verify lab resources using boto3.
+
+#### Lab 001: Secure Amazon S3 Bucket
+
+The student must:
+
+1. Create an S3 bucket with the prefix `study-coach-lab-`.
+2. Enable S3 Versioning.
+3. Enable all four S3 Block Public Access settings.
+4. Configure default SSE-S3 encryption (AES256).
+
+The verifier checks the bucket configuration using read-only AWS API calls.
+
+It also validates:
+- Expected AWS account ownership
+- AWS region (`eu-central-1`)
+- API access errors separately from failed configuration checks
+
+### Real AWS Integration Test
+
+Successfully tested in AWS `eu-central-1`.
+
+| Verification | Result |
+|---|---|
+| Bucket ownership | PASS |
+| Region validation | PASS |
+| S3 Versioning | PASS |
+| Block Public Access | PASS |
+| Default Encryption (AES256) | PASS |
+| Lab score | **3/3** |
+
+The Strands Agent successfully invoked `verify_lab_task` through
+Amazon Bedrock Nova Micro and returned the verification results with
+explanations.
+
+### Running Unit Tests
+
+From the repository root:
+
+```powershell
+& .\app\agent\.venv\Scripts\python.exe -m unittest discover -s test -p "test_*.py" -v
+```
+
+Latest local validation: **17 tests passed**.
+
+### Security and Limitations
+
+- AWS resources are created manually by the student.
+- Lab verification uses read-only S3 API operations.
+- The verifier requires `AWS_STUDY_ACCOUNT_ID`.
+- Lab bucket names must start with `study-coach-lab-`.
+- The current S3 lab is restricted to `eu-central-1`.
+- Local end-to-end testing used an existing AWS SSO profile with Bedrock access.
+- A dedicated least-privilege runtime role is still required before cloud deployment.
+- The practice tools have not yet been deployed to AgentCore Runtime.
+
+### Planned Improvements
+
+- Additional questions for Lambda, EC2, VPC, and IAM.
+- More hands-on labs with automated verification.
+- Dedicated least-privilege permissions for the lab verifier.
+- Student progress tracking and lab history.
+- Integration with the deployed Amazon Bedrock AgentCore Runtime.
+```
