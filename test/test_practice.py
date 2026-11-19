@@ -18,6 +18,31 @@ from practice import (
 
 class PracticeTests(unittest.TestCase):
 
+    def test_access_denied_is_not_failed_lab(self):
+        from botocore.exceptions import ClientError
+
+        s3 = MagicMock()
+        s3.head_bucket.return_value = {
+            "BucketRegion": "eu-central-1"
+        }
+        s3.get_bucket_versioning.side_effect = ClientError(
+         {
+                "Error": {
+                "Code": "AccessDenied",
+                "Message": "Access denied"
+            }
+        },
+        "GetBucketVersioning",
+        )
+
+        result = verify_s3_lab(
+            "study-coach-lab-test", s3, "123456789012"
+        )
+
+        self.assertEqual(result["error"], "AccessDenied")
+        self.assertEqual(result["check"], "versioning")
+        self.assertNotIn("score", result)
+
     def test_s3_question(self):
         result = make_practice_question("S3")
         self.assertEqual(result["id"], "s3-001")
@@ -41,6 +66,10 @@ class PracticeTests(unittest.TestCase):
 
     def test_s3_lab_pass(self):
         s3 = MagicMock()
+
+        s3.head_bucket.return_value = {
+            "BucketRegion": "eu-central-1"
+        }
 
         s3.get_bucket_versioning.return_value = {
             "Status": "Enabled"
@@ -79,19 +108,34 @@ class PracticeTests(unittest.TestCase):
 
     def test_s3_lab_failure(self):
         s3 = MagicMock()
+
+        s3.head_bucket.return_value = {
+            "BucketRegion": "eu-central-1"
+        }
+
         s3.get_bucket_versioning.return_value = {
             "Status": "Suspended"
         }
-        s3.get_public_access_block.side_effect = Exception("Missing")
-        s3.get_bucket_encryption.side_effect = Exception("Missing")
+
+        s3.get_public_access_block.return_value = {
+            "PublicAccessBlockConfiguration": {}
+        }
+
+        s3.get_bucket_encryption.return_value = {
+            "ServerSideEncryptionConfiguration": {
+                "Rules": []
+            }
+        }
 
         result = verify_s3_lab(
             "study-coach-lab-test",
             s3,
             "123456789012",
         )
+
         self.assertFalse(result["passed"])
         self.assertEqual(result["score"], 0)
+        self.assertEqual(result["total"], 3)
 
     def test_reject_wrong_bucket_prefix(self):
         s3 = MagicMock()
@@ -107,6 +151,7 @@ class PracticeTests(unittest.TestCase):
         )
         self.assertIn("error", result)
 
+    
 
 if __name__ == "__main__":
     unittest.main()
