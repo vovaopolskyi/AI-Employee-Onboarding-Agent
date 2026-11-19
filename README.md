@@ -274,3 +274,54 @@ Successfully validated the Lambda configuration lab against a real AWS Lambda fu
 The Strands Agent successfully invoked `verify_lambda_lab_task` using Amazon Bedrock Nova Micro and returned the verification results with explanations.
 
 Lambda configuration verification uses read-only AWS API calls. The production AgentCore deployment is pending.
+
+## AWS Certification Question Bank and Hands-on Labs
+
+AWS Study Coach combines certification preparation with practical AWS exercises and automated resource verification.
+
+### Certification Question Bank
+
+- 50 curated multiple-choice questions.
+- Supported topics: Amazon S3, IAM, Lambda, EC2, and VPC.
+- 10 questions per topic.
+- Difficulty filtering and randomized question selection.
+- Answer validation with explanations.
+- Questions stored in `app/agent/data/questions.json`.
+
+### Hands-on AWS Labs
+
+| Lab | Verification | Real AWS Test |
+|---|---|---|
+| S3 Secure Bucket | Versioning, Block Public Access, encryption | 3/3 PASS |
+| Lambda Configuration | Runtime, memory, timeout, state, execution role | 5/5 PASS |
+| IAM Least Privilege | Trust policy, inline policy, attached policies, allowed action and resource scope | 5/5 PASS |
+
+Verification is implemented with `boto3` using read-only AWS API operations.
+
+### End-to-End Integration
+
+All three labs were successfully verified through Strands Agent using Amazon Bedrock Nova Micro.
+
+The agent invoked the appropriate verification tools and explained the results.
+
+### Testing
+
+- 39 unit tests passed.
+- S3, Lambda, and IAM labs validated against real AWS resources.
+- AWS region: `eu-central-1`.
+
+### Security and Limitations
+
+- Lab resources are created manually by the student.
+- Verification tools do not create, modify, or delete AWS resources.
+- Local integration tests used AWS IAM Identity Center credentials.
+- IAM Lab checks a prescribed policy configuration, not every possible effective IAM permission.
+- A dedicated least-privilege role is required for production AgentCore deployment.
+- These new features are not yet deployed to AgentCore Runtime.
+
+### Future Improvements
+
+- Exam mode with scoring across multiple questions.
+- Student progress tracking.
+- Additional EC2 and VPC hands-on labs.
+- Least-privilege AgentCore deployment.
