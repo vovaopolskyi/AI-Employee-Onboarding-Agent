@@ -5,6 +5,7 @@ from strands.agent.conversation_manager.null_conversation_manager import NullCon
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 from model.load import load_model
 from parse import parse_payload
+from study_materials import search_study_materials
 
 
 DEFAULT_SYSTEM_PROMPT = "You are a helpful assistant. Use tools when appropriate."
@@ -19,6 +20,7 @@ def add_numbers(a: int, b: int) -> int:
     return a + b
 
 tools.append(add_numbers)
+tools.append(search_study_materials)
 
 def _make_conversation_manager():
     return NullConversationManager()

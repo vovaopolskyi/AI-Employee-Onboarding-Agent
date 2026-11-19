@@ -150,3 +150,15 @@ These checks validate the current prototype and selected security scenarios. The
 Amazon Bedrock inference and Python tool execution have been verified successfully with the Runtime permissions boundary in place.
 
 Next milestones include CloudFormation security alignment, least-privilege deployment, certification study tools, automated testing, and improved observability.
+
+## Study Materials Search
+
+The agent includes a Strands SDK tool named search_study_materials for keyword-based searches across curated AWS documentation for S3, IAM, and Lambda.
+
+The search is case-insensitive and handles empty or unknown queries.
+
+Seven unit tests passed locally using Python unittest.
+
+Run tests: `.\app\agent\.venv\Scripts\python.exe -m unittest discover -s test -p test_*.py -v` 
+
+Cloud integration testing for this new tool is pending.
