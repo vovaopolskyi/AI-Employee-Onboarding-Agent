@@ -12,6 +12,14 @@ from practice import (
     generate_lab_task,
     verify_lab_task,
 )
+from lambda_lab import (
+    generate_lambda_lab_task,
+    verify_lambda_lab_task,
+)
+from iam_lab import (
+    generate_iam_lab_task,
+    verify_iam_lab_task,
+)
 
 
 DEFAULT_SYSTEM_PROMPT = "You are a helpful assistant. Use tools when appropriate."
@@ -26,12 +34,24 @@ def add_numbers(a: int, b: int) -> int:
     return a + b
 
 tools.append(add_numbers)
+
 tools.append(search_study_materials)
+
 tools.extend([
     generate_practice_question,
     check_practice_answer,
     generate_lab_task,
     verify_lab_task,
+])
+
+tools.extend([
+    generate_lambda_lab_task,
+    verify_lambda_lab_task,
+])
+
+tools.extend([
+    generate_iam_lab_task,
+    verify_iam_lab_task,
 ])
 
 def _make_conversation_manager():

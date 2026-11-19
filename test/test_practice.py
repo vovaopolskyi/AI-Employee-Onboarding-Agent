@@ -45,16 +45,24 @@ class PracticeTests(unittest.TestCase):
 
     def test_s3_question(self):
         result = make_practice_question("S3")
-        self.assertEqual(result["id"], "s3-001")
+
+        self.assertEqual(result["topic"], "S3")
         self.assertEqual(len(result["options"]), 4)
         self.assertNotIn("answer", result)
+        self.assertTrue(result["id"].startswith("s3-"))
 
     def test_iam_question(self):
         result = make_practice_question("IAM")
-        self.assertEqual(result["id"], "iam-001")
+
+        self.assertEqual(result["topic"], "IAM")
+        self.assertEqual(len(result["options"]), 4)
+        self.assertNotIn("answer", result)
+        self.assertTrue(result["id"].startswith("iam-"))
 
     def test_unknown_question(self):
-        self.assertIn("error", make_practice_question("EC2"))
+        result = make_practice_question("UnknownService")
+
+        self.assertIn("error", result)
 
     def test_s3_lab(self):
         result = make_lab_task("S3")

@@ -3,80 +3,38 @@ import os
 
 from strands import tool
 from botocore.exceptions import ClientError
+from question_bank import get_question, check_answer
 
-QUESTIONS = {
-    "s3": {
-        "id": "s3-001",
-        "question": "Which S3 feature protects against accidental object deletion?",
-        "options": {
-            "A": "Transfer Acceleration",
-            "B": "Versioning",
-            "C": "Static Website Hosting",
-            "D": "Requester Pays",
-        },
-        "answer": "B",
-        "explanation": "Versioning preserves multiple versions of an object.",
-    },
-    "iam": {
-        "id": "iam-001",
-        "question": "Which principle grants only permissions required for a task?",
-        "options": {
-            "A": "Least privilege",
-            "B": "Full administrator access",
-            "C": "Public access",
-            "D": "Root account usage",
-        },
-        "answer": "A",
-        "explanation": "Least privilege limits unnecessary permissions.",
-    },
-}
+
 
 
 def make_practice_question(topic: str) -> dict:
-    question = QUESTIONS.get(topic.strip().lower())
-    if question is None:
-        return {"error": f"No questions available for: {topic}"}
-
-    return {
-        "id": question["id"],
-        "question": question["question"],
-        "options": question["options"],
-    }
+    return get_question(topic)
 
 
 @tool
-def generate_practice_question(topic: str) -> dict:
-    """Get an AWS certification practice question.
+def generate_practice_question(
+    topic: str,
+    difficulty: str = "any",
+) -> dict:
+    """Get a random AWS certification practice question.
 
     Args:
-        topic: AWS topic, such as S3 or IAM.
+        topic: AWS topic, such as S3.
+        difficulty: easy, medium, or any.
     """
-    return make_practice_question(topic)
+    return get_question(topic, difficulty)
 
 
 @tool
 def check_practice_answer(question_id: str, answer: str) -> dict:
-    """Check an answer to an AWS practice question.
+    """Check an answer to an AWS certification question.
 
     Args:
         question_id: ID returned by generate_practice_question.
         answer: Selected option A, B, C, or D.
     """
-    question = next(
-        (q for q in QUESTIONS.values() if q["id"] == question_id),
-        None,
-    )
-    if question is None:
-        return {"error": "Unknown question ID"}
-
-    selected = answer.strip().upper()
-    correct = selected == question["answer"]
-    return {
-        "correct": correct,
-        "correct_answer": question["answer"],
-        "explanation": question["explanation"],
-    }
-
+    return check_answer(question_id, answer)
 
 def make_lab_task(service: str) -> dict:
     if service.strip().lower() != "s3":

@@ -1,0 +1,702 @@
+[
+  {
+    "id": "s3-001",
+    "topic": "S3",
+    "difficulty": "easy",
+    "question": "Which Amazon S3 feature helps recover accidentally deleted objects?",
+    "options": {
+      "A": "Transfer Acceleration",
+      "B": "Versioning",
+      "C": "Static Website Hosting",
+      "D": "Requester Pays"
+    },
+    "answer": "B",
+    "explanation": "S3 Versioning preserves multiple versions of objects, allowing recovery of previous versions."
+  },
+  {
+    "id": "s3-002",
+    "topic": "S3",
+    "difficulty": "easy",
+    "question": "Which S3 storage class is designed for frequently accessed data?",
+    "options": {
+      "A": "S3 Standard",
+      "B": "S3 Glacier Deep Archive",
+      "C": "S3 One Zone-IA",
+      "D": "S3 Glacier Flexible Retrieval"
+    },
+    "answer": "A",
+    "explanation": "S3 Standard is designed for frequently accessed data."
+  },
+  {
+    "id": "s3-003",
+    "topic": "S3",
+    "difficulty": "medium",
+    "question": "Which feature helps prevent public access to S3 buckets?",
+    "options": {
+      "A": "S3 Transfer Acceleration",
+      "B": "S3 Lifecycle",
+      "C": "S3 Block Public Access",
+      "D": "S3 Replication"
+    },
+    "answer": "C",
+    "explanation": "S3 Block Public Access provides settings to restrict public access to buckets and objects."
+  },
+  {
+    "id": "s3-004",
+    "topic": "S3",
+    "difficulty": "medium",
+    "question": "Which feature automatically transitions S3 objects between storage classes based on configured rules?",
+    "options": {
+      "A": "S3 Lifecycle",
+      "B": "S3 Versioning",
+      "C": "S3 Event Notifications",
+      "D": "S3 Object Lock"
+    },
+    "answer": "A",
+    "explanation": "S3 Lifecycle rules can transition objects to other storage classes and expire objects."
+  },
+  {
+    "id": "s3-005",
+    "topic": "S3",
+    "difficulty": "medium",
+    "question": "Which S3 feature helps protect object versions against deletion or overwriting for a specified retention period?",
+    "options": {
+      "A": "S3 Transfer Acceleration",
+      "B": "S3 Object Lock",
+      "C": "S3 Event Notifications",
+      "D": "S3 Intelligent-Tiering"
+    },
+    "answer": "B",
+    "explanation": "S3 Object Lock supports retention periods that protect object versions against deletion or overwriting."
+  },
+  {
+    "id": "s3-006",
+    "topic": "S3",
+    "difficulty": "easy",
+    "question": "What is the basic unit of data stored in Amazon S3?",
+    "options": {
+      "A": "A volume",
+      "B": "An object",
+      "C": "A table",
+      "D": "A file system mount"
+    },
+    "answer": "B",
+    "explanation": "Amazon S3 stores data as objects inside buckets."
+  },
+  {
+    "id": "s3-007",
+    "topic": "S3",
+    "difficulty": "medium",
+    "question": "Which S3 feature can copy objects automatically between buckets in different AWS Regions?",
+    "options": {
+      "A": "Cross-Region Replication",
+      "B": "Bucket Inventory",
+      "C": "Transfer Acceleration",
+      "D": "S3 Select"
+    },
+    "answer": "A",
+    "explanation": "S3 Cross-Region Replication replicates eligible objects to a bucket in another AWS Region when configured."
+  },
+  {
+    "id": "s3-008",
+    "topic": "S3",
+    "difficulty": "easy",
+    "question": "Which S3 storage class is intended for long-term archives with very infrequent access and retrieval measured in hours?",
+    "options": {
+      "A": "S3 Standard",
+      "B": "S3 Express One Zone",
+      "C": "S3 Glacier Deep Archive",
+      "D": "S3 Intelligent-Tiering"
+    },
+    "answer": "C",
+    "explanation": "S3 Glacier Deep Archive is intended for long-term archival storage with infrequent retrieval."
+  },
+  {
+    "id": "s3-009",
+    "topic": "S3",
+    "difficulty": "medium",
+    "question": "How can an application grant temporary access to a private S3 object without changing the bucket policy?",
+    "options": {
+      "A": "Enable public ACLs",
+      "B": "Create a presigned URL",
+      "C": "Disable encryption",
+      "D": "Turn on static website hosting"
+    },
+    "answer": "B",
+    "explanation": "A presigned URL grants time-limited access to a specific S3 operation using the signer’s permissions."
+  },
+  {
+    "id": "s3-010",
+    "topic": "S3",
+    "difficulty": "medium",
+    "question": "Which feature helps manage unknown or changing S3 access patterns by moving objects between access tiers?",
+    "options": {
+      "A": "S3 Intelligent-Tiering",
+      "B": "S3 Object Lock",
+      "C": "S3 Batch Replication",
+      "D": "S3 Access Logs"
+    },
+    "answer": "A",
+    "explanation": "S3 Intelligent-Tiering automatically optimizes storage cost for changing access patterns through access tiers."
+  },
+  {
+    "id": "iam-001",
+    "topic": "IAM",
+    "difficulty": "easy",
+    "question": "Which AWS security principle grants users only the permissions required to perform their tasks?",
+    "options": {
+      "A": "Least privilege",
+      "B": "Administrator access",
+      "C": "Public access",
+      "D": "Root user access"
+    },
+    "answer": "A",
+    "explanation": "The principle of least privilege limits permissions to those necessary for a specific task."
+  },
+  {
+    "id": "iam-002",
+    "topic": "IAM",
+    "difficulty": "easy",
+    "question": "What is an IAM role primarily used for?",
+    "options": {
+      "A": "Permanent passwords for every service",
+      "B": "Temporary access assumed by trusted principals",
+      "C": "Hosting websites",
+      "D": "Encrypting EBS volumes"
+    },
+    "answer": "B",
+    "explanation": "IAM roles provide temporary credentials when assumed by trusted users, workloads, or services."
+  },
+  {
+    "id": "iam-003",
+    "topic": "IAM",
+    "difficulty": "easy",
+    "question": "Which security measure adds a second factor to an AWS sign-in?",
+    "options": {
+      "A": "S3 Versioning",
+      "B": "MFA",
+      "C": "VPC peering",
+      "D": "CloudFront caching"
+    },
+    "answer": "B",
+    "explanation": "Multi-factor authentication requires an additional authentication factor beyond a password."
+  },
+  {
+    "id": "iam-004",
+    "topic": "IAM",
+    "difficulty": "medium",
+    "question": "What happens when an applicable IAM policy contains an explicit Deny for an action?",
+    "options": {
+      "A": "An Allow always overrides it",
+      "B": "The action is denied",
+      "C": "The action is permitted in the same Region",
+      "D": "Only the root user is affected"
+    },
+    "answer": "B",
+    "explanation": "An explicit Deny overrides an applicable Allow in AWS policy evaluation."
+  },
+  {
+    "id": "iam-005",
+    "topic": "IAM",
+    "difficulty": "medium",
+    "question": "Which policy defines who is allowed to assume an IAM role?",
+    "options": {
+      "A": "S3 bucket policy",
+      "B": "Role trust policy",
+      "C": "Security group rule",
+      "D": "Route table"
+    },
+    "answer": "B",
+    "explanation": "A role trust policy identifies the principals allowed to call STS to assume the role."
+  },
+  {
+    "id": "iam-006",
+    "topic": "IAM",
+    "difficulty": "medium",
+    "question": "What is the purpose of an IAM permissions boundary?",
+    "options": {
+      "A": "To grant all permissions automatically",
+      "B": "To set the maximum permissions an IAM user or role can receive from identity-based policies",
+      "C": "To create a VPC firewall",
+      "D": "To rotate KMS keys"
+    },
+    "answer": "B",
+    "explanation": "Permissions boundaries limit the maximum effective permissions granted through identity-based policies; they do not grant permissions themselves."
+  },
+  {
+    "id": "iam-007",
+    "topic": "IAM",
+    "difficulty": "easy",
+    "question": "Which AWS service issues temporary security credentials for role sessions?",
+    "options": {
+      "A": "AWS STS",
+      "B": "Amazon Route 53",
+      "C": "Amazon EFS",
+      "D": "AWS Config"
+    },
+    "answer": "A",
+    "explanation": "AWS Security Token Service (STS) issues temporary security credentials."
+  },
+  {
+    "id": "iam-008",
+    "topic": "IAM",
+    "difficulty": "medium",
+    "question": "Which service offers centralized workforce access to multiple AWS accounts?",
+    "options": {
+      "A": "AWS IAM Identity Center",
+      "B": "Amazon SNS",
+      "C": "AWS CloudTrail Lake",
+      "D": "Amazon API Gateway"
+    },
+    "answer": "A",
+    "explanation": "IAM Identity Center supports centralized workforce access and permission sets across AWS accounts."
+  },
+  {
+    "id": "iam-009",
+    "topic": "IAM",
+    "difficulty": "medium",
+    "question": "Which option best avoids embedding long-lived AWS access keys in code running on Amazon EC2?",
+    "options": {
+      "A": "Use an IAM role attached through an instance profile",
+      "B": "Put keys in user data",
+      "C": "Store keys in a public S3 bucket",
+      "D": "Use the root account access key"
+    },
+    "answer": "A",
+    "explanation": "An EC2 instance profile provides temporary role credentials to applications on an instance."
+  },
+  {
+    "id": "iam-010",
+    "topic": "IAM",
+    "difficulty": "medium",
+    "question": "Which IAM policy element specifies the API actions that a statement covers?",
+    "options": {
+      "A": "Action",
+      "B": "PrincipalTag",
+      "C": "Versioning",
+      "D": "AvailabilityZone"
+    },
+    "answer": "A",
+    "explanation": "The Action element lists the API operations to which an IAM policy statement applies."
+  },
+  {
+    "id": "lambda-001",
+    "topic": "Lambda",
+    "difficulty": "easy",
+    "question": "What is AWS Lambda primarily designed to run?",
+    "options": {
+      "A": "Code in response to events without managing servers",
+      "B": "Only relational databases",
+      "C": "Dedicated physical servers",
+      "D": "VPC route tables"
+    },
+    "answer": "A",
+    "explanation": "AWS Lambda runs function code on managed infrastructure and can be invoked by events."
+  },
+  {
+    "id": "lambda-002",
+    "topic": "Lambda",
+    "difficulty": "easy",
+    "question": "Which configuration sets the maximum duration of a single Lambda invocation?",
+    "options": {
+      "A": "Timeout",
+      "B": "Memory only",
+      "C": "Reserved concurrency",
+      "D": "Function name"
+    },
+    "answer": "A",
+    "explanation": "The Lambda timeout limits how long an invocation can run before it is stopped."
+  },
+  {
+    "id": "lambda-003",
+    "topic": "Lambda",
+    "difficulty": "medium",
+    "question": "What is the purpose of a Lambda execution role?",
+    "options": {
+      "A": "Determine who may sign in to the console",
+      "B": "Grant the function permissions to call other AWS services",
+      "C": "Provision an EC2 key pair",
+      "D": "Create a VPC CIDR block"
+    },
+    "answer": "B",
+    "explanation": "The Lambda execution role provides AWS permissions to the running function."
+  },
+  {
+    "id": "lambda-004",
+    "topic": "Lambda",
+    "difficulty": "medium",
+    "question": "Which feature limits the number of concurrent instances of a specific Lambda function?",
+    "options": {
+      "A": "Reserved concurrency",
+      "B": "S3 Versioning",
+      "C": "Security groups",
+      "D": "CloudFront invalidations"
+    },
+    "answer": "A",
+    "explanation": "Reserved concurrency reserves and limits concurrent executions for a function."
+  },
+  {
+    "id": "lambda-005",
+    "topic": "Lambda",
+    "difficulty": "easy",
+    "question": "Where can Lambda function execution logs typically be viewed when logging permissions are configured?",
+    "options": {
+      "A": "Amazon CloudWatch Logs",
+      "B": "Amazon S3 Glacier only",
+      "C": "AWS Budgets",
+      "D": "Amazon Route 53"
+    },
+    "answer": "A",
+    "explanation": "Lambda commonly writes execution logs to CloudWatch Logs when its execution role allows this."
+  },
+  {
+    "id": "lambda-006",
+    "topic": "Lambda",
+    "difficulty": "medium",
+    "question": "Which event source can invoke Lambda when a new object is created in an S3 bucket?",
+    "options": {
+      "A": "S3 Event Notifications",
+      "B": "S3 Lifecycle expiration only",
+      "C": "IAM permissions boundary",
+      "D": "Amazon EBS snapshot"
+    },
+    "answer": "A",
+    "explanation": "S3 Event Notifications can invoke a Lambda function when selected object events occur."
+  },
+  {
+    "id": "lambda-007",
+    "topic": "Lambda",
+    "difficulty": "medium",
+    "question": "What is a Lambda cold start?",
+    "options": {
+      "A": "The function returning an HTTP 404",
+      "B": "Initialization when Lambda prepares a new execution environment",
+      "C": "A timed-out S3 request",
+      "D": "A stopped EC2 instance"
+    },
+    "answer": "B",
+    "explanation": "A cold start includes preparing a new execution environment and initializing function code."
+  },
+  {
+    "id": "lambda-008",
+    "topic": "Lambda",
+    "difficulty": "medium",
+    "question": "Which Lambda feature allows gradual traffic shifting between published function versions?",
+    "options": {
+      "A": "Aliases with weighted routing",
+      "B": "S3 bucket ACLs",
+      "C": "VPC route propagation",
+      "D": "EBS encryption"
+    },
+    "answer": "A",
+    "explanation": "Lambda aliases can route a percentage of invocations to different published versions."
+  },
+  {
+    "id": "lambda-009",
+    "topic": "Lambda",
+    "difficulty": "medium",
+    "question": "What is a benefit of connecting Lambda to a VPC when it needs private network resources?",
+    "options": {
+      "A": "Access to resources reachable within that VPC",
+      "B": "Unlimited execution timeout",
+      "C": "Automatic public internet access",
+      "D": "Removal of execution roles"
+    },
+    "answer": "A",
+    "explanation": "VPC connectivity lets a Lambda function reach private resources according to subnet routes and security rules."
+  },
+  {
+    "id": "lambda-010",
+    "topic": "Lambda",
+    "difficulty": "easy",
+    "question": "What does an event payload provide to a Lambda handler?",
+    "options": {
+      "A": "Invocation input data",
+      "B": "A permanent administrator password",
+      "C": "An EC2 AMI",
+      "D": "An EBS volume"
+    },
+    "answer": "A",
+    "explanation": "The event is the input passed to the Lambda handler for an invocation."
+  },
+  {
+    "id": "ec2-001",
+    "topic": "EC2",
+    "difficulty": "easy",
+    "question": "What is an Amazon Machine Image (AMI)?",
+    "options": {
+      "A": "A template used to launch an EC2 instance",
+      "B": "A VPC firewall",
+      "C": "A managed database",
+      "D": "An S3 access point"
+    },
+    "answer": "A",
+    "explanation": "An AMI defines information needed to launch an EC2 instance, including its software image."
+  },
+  {
+    "id": "ec2-002",
+    "topic": "EC2",
+    "difficulty": "easy",
+    "question": "Which AWS feature acts as a stateful virtual firewall for EC2 instances?",
+    "options": {
+      "A": "Security group",
+      "B": "Network ACL only",
+      "C": "Route table",
+      "D": "IAM permissions boundary"
+    },
+    "answer": "A",
+    "explanation": "Security groups are stateful controls for allowed inbound and outbound instance traffic."
+  },
+  {
+    "id": "ec2-003",
+    "topic": "EC2",
+    "difficulty": "medium",
+    "question": "Which EC2 feature provides temporary IAM role credentials to applications on an instance?",
+    "options": {
+      "A": "Instance profile",
+      "B": "Elastic IP address",
+      "C": "Placement group",
+      "D": "EBS snapshot"
+    },
+    "answer": "A",
+    "explanation": "An instance profile associates an IAM role with an EC2 instance."
+  },
+  {
+    "id": "ec2-004",
+    "topic": "EC2",
+    "difficulty": "medium",
+    "question": "Which EC2 purchasing option is appropriate for fault-tolerant workloads that can handle interruptions?",
+    "options": {
+      "A": "Spot Instances",
+      "B": "Dedicated Hosts only",
+      "C": "On-Demand Capacity Reservations only",
+      "D": "Savings Plans only"
+    },
+    "answer": "A",
+    "explanation": "Spot Instances can be interrupted and are suited to interruption-tolerant workloads."
+  },
+  {
+    "id": "ec2-005",
+    "topic": "EC2",
+    "difficulty": "easy",
+    "question": "Which storage service commonly provides persistent block storage for EC2?",
+    "options": {
+      "A": "Amazon EBS",
+      "B": "Amazon SNS",
+      "C": "Amazon Route 53",
+      "D": "AWS STS"
+    },
+    "answer": "A",
+    "explanation": "EBS volumes provide persistent block storage that can be attached to EC2 instances."
+  },
+  {
+    "id": "ec2-006",
+    "topic": "EC2",
+    "difficulty": "medium",
+    "question": "Which EC2 instance metadata setting requires use of IMDSv2?",
+    "options": {
+      "A": "HttpTokens=required",
+      "B": "HttpEndpoint=disabled",
+      "C": "InstanceInitiatedShutdownBehavior=terminate",
+      "D": "Monitoring=enabled"
+    },
+    "answer": "A",
+    "explanation": "Setting HttpTokens to required enforces IMDSv2 session tokens for metadata requests."
+  },
+  {
+    "id": "ec2-007",
+    "topic": "EC2",
+    "difficulty": "medium",
+    "question": "What does an Auto Scaling group help maintain?",
+    "options": {
+      "A": "A desired number of EC2 instances",
+      "B": "The S3 object version count",
+      "C": "A fixed IAM password",
+      "D": "The number of VPC endpoints globally"
+    },
+    "answer": "A",
+    "explanation": "An EC2 Auto Scaling group helps maintain the desired capacity and can replace unhealthy instances."
+  },
+  {
+    "id": "ec2-008",
+    "topic": "EC2",
+    "difficulty": "medium",
+    "question": "What can an Application Load Balancer do?",
+    "options": {
+      "A": "Route HTTP/HTTPS requests to healthy targets",
+      "B": "Manage IAM user passwords",
+      "C": "Store EBS snapshots",
+      "D": "Issue S3 presigned URLs"
+    },
+    "answer": "A",
+    "explanation": "An Application Load Balancer distributes application-layer requests to registered healthy targets."
+  },
+  {
+    "id": "ec2-009",
+    "topic": "EC2",
+    "difficulty": "easy",
+    "question": "What is an EC2 key pair commonly used for?",
+    "options": {
+      "A": "Authentication when connecting to supported instances",
+      "B": "Encrypting all S3 buckets automatically",
+      "C": "Defining VPC routing",
+      "D": "Creating IAM permission boundaries"
+    },
+    "answer": "A",
+    "explanation": "EC2 key pairs can support authentication when connecting to instances, depending on the operating system and connection method."
+  },
+  {
+    "id": "ec2-010",
+    "topic": "EC2",
+    "difficulty": "medium",
+    "question": "Which action helps protect data stored on EBS volumes?",
+    "options": {
+      "A": "Enable EBS encryption",
+      "B": "Disable all security groups",
+      "C": "Put access keys in user data",
+      "D": "Assign a public IP address"
+    },
+    "answer": "A",
+    "explanation": "EBS encryption protects data at rest on encrypted EBS volumes and their snapshots."
+  },
+  {
+    "id": "vpc-001",
+    "topic": "VPC",
+    "difficulty": "easy",
+    "question": "What does an Amazon VPC provide?",
+    "options": {
+      "A": "A logically isolated virtual network in AWS",
+      "B": "A managed Git repository",
+      "C": "A serverless SQL engine",
+      "D": "An AWS certification exam"
+    },
+    "answer": "A",
+    "explanation": "A VPC is a logically isolated virtual network for AWS resources."
+  },
+  {
+    "id": "vpc-002",
+    "topic": "VPC",
+    "difficulty": "easy",
+    "question": "What is a subnet?",
+    "options": {
+      "A": "A range of IP addresses within a VPC in one Availability Zone",
+      "B": "A global S3 bucket",
+      "C": "An IAM role session",
+      "D": "An EC2 AMI"
+    },
+    "answer": "A",
+    "explanation": "A subnet is a CIDR range within a VPC and resides in one Availability Zone."
+  },
+  {
+    "id": "vpc-003",
+    "topic": "VPC",
+    "difficulty": "medium",
+    "question": "What is required for a subnet to have a route to the internet through an internet gateway?",
+    "options": {
+      "A": "A route to an attached internet gateway in the subnet route table",
+      "B": "Only a security group",
+      "C": "An IAM user access key",
+      "D": "S3 Versioning"
+    },
+    "answer": "A",
+    "explanation": "The subnet route table must direct internet-bound traffic to an internet gateway attached to the VPC."
+  },
+  {
+    "id": "vpc-004",
+    "topic": "VPC",
+    "difficulty": "medium",
+    "question": "What is a typical purpose of a NAT gateway in a public subnet?",
+    "options": {
+      "A": "Allow instances in private subnets to initiate outbound internet access",
+      "B": "Allow unsolicited inbound connections to private instances",
+      "C": "Replace all route tables",
+      "D": "Provide IAM authentication"
+    },
+    "answer": "A",
+    "explanation": "A NAT gateway can enable outbound connections from private subnets without permitting unsolicited inbound internet connections."
+  },
+  {
+    "id": "vpc-005",
+    "topic": "VPC",
+    "difficulty": "medium",
+    "question": "How does a network ACL differ from a security group?",
+    "options": {
+      "A": "Network ACLs are stateless and operate at subnet level",
+      "B": "Network ACLs are always stateful",
+      "C": "Security groups act only at subnet level",
+      "D": "Network ACLs grant IAM permissions"
+    },
+    "answer": "A",
+    "explanation": "Network ACLs are stateless subnet-level controls; security groups are stateful and associated with network interfaces."
+  },
+  {
+    "id": "vpc-006",
+    "topic": "VPC",
+    "difficulty": "easy",
+    "question": "Which VPC feature records metadata about IP traffic to or from network interfaces?",
+    "options": {
+      "A": "VPC Flow Logs",
+      "B": "S3 Inventory",
+      "C": "AWS STS",
+      "D": "Lambda layers"
+    },
+    "answer": "A",
+    "explanation": "VPC Flow Logs record information about network traffic flows for supported VPC resources."
+  },
+  {
+    "id": "vpc-007",
+    "topic": "VPC",
+    "difficulty": "medium",
+    "question": "Which AWS feature provides private connectivity from a VPC to supported AWS services without traversing the public internet?",
+    "options": {
+      "A": "VPC endpoints",
+      "B": "Internet gateway",
+      "C": "Elastic IP address",
+      "D": "Public DNS only"
+    },
+    "answer": "A",
+    "explanation": "VPC endpoints provide private connectivity to supported AWS services through endpoint types such as gateway or interface endpoints."
+  },
+  {
+    "id": "vpc-008",
+    "topic": "VPC",
+    "difficulty": "medium",
+    "question": "What is VPC peering primarily used for?",
+    "options": {
+      "A": "Private network connectivity between two VPCs",
+      "B": "Automatic transitive routing among every VPC",
+      "C": "Direct S3 lifecycle transitions",
+      "D": "EC2 instance image creation"
+    },
+    "answer": "A",
+    "explanation": "VPC peering enables private IP connectivity between two VPCs, subject to routing and security configuration."
+  },
+  {
+    "id": "vpc-009",
+    "topic": "VPC",
+    "difficulty": "medium",
+    "question": "What is the main role of a route table in a VPC?",
+    "options": {
+      "A": "Determine where network traffic is directed",
+      "B": "Set IAM group membership",
+      "C": "Encrypt Lambda environment variables",
+      "D": "Store CloudWatch logs"
+    },
+    "answer": "A",
+    "explanation": "A route table contains rules that determine where subnet or gateway traffic is directed."
+  },
+  {
+    "id": "vpc-010",
+    "topic": "VPC",
+    "difficulty": "medium",
+    "question": "Which AWS service can act as a central hub for routing among multiple VPCs and on-premises networks?",
+    "options": {
+      "A": "AWS Transit Gateway",
+      "B": "Amazon S3 Glacier",
+      "C": "AWS Secrets Manager",
+      "D": "Amazon EventBridge"
+    },
+    "answer": "A",
+    "explanation": "AWS Transit Gateway connects VPCs and on-premises networks through a central routing hub."
+  }
+]
