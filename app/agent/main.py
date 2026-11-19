@@ -16,6 +16,10 @@ from lambda_lab import (
     generate_lambda_lab_task,
     verify_lambda_lab_task,
 )
+from iam_lab import (
+    generate_iam_lab_task,
+    verify_iam_lab_task,
+)
 
 
 DEFAULT_SYSTEM_PROMPT = "You are a helpful assistant. Use tools when appropriate."
@@ -43,6 +47,11 @@ tools.extend([
 tools.extend([
     generate_lambda_lab_task,
     verify_lambda_lab_task,
+])
+
+tools.extend([
+    generate_iam_lab_task,
+    verify_iam_lab_task,
 ])
 
 def _make_conversation_manager():
