@@ -163,3 +163,15 @@ Run tests: `.\app\agent\.venv\Scripts\python.exe -m unittest discover -s test -p
 
 Cloud integration testing for this new tool is pending.
 
+### AWS S3 Lab Integration Validation
+
+Successfully validated the S3 Secure Bucket lab against a real AWS account in `eu-central-1`.
+
+- AWS authentication: IAM Identity Center read-only role
+- Bucket ownership verification: passed
+- S3 Versioning: enabled
+- Block Public Access: all four settings enabled
+- Default Encryption: SSE-S3 (AES256)
+- Result: **3/3 checks passed**
+
+Validation was performed using `boto3` and read-only AWS API operations. AgentCore deployment is pending.
