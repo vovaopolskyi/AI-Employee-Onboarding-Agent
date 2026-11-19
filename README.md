@@ -1,4 +1,4 @@
-# AWS AI Certification Study Coach Agent
+﻿# AWS AI Certification Study Coach Agent
 
 An AI-powered AWS Certification Study Coach built with Python, Strands Agents SDK, Amazon Bedrock, and Amazon Bedrock AgentCore.
 
@@ -162,3 +162,4 @@ Seven unit tests passed locally using Python unittest.
 Run tests: `.\app\agent\.venv\Scripts\python.exe -m unittest discover -s test -p test_*.py -v` 
 
 Cloud integration testing for this new tool is pending.
+
