@@ -45,9 +45,11 @@ class PracticeTests(unittest.TestCase):
 
     def test_s3_question(self):
         result = make_practice_question("S3")
-        self.assertEqual(result["id"], "s3-001")
+
+        self.assertEqual(result["topic"], "S3")
         self.assertEqual(len(result["options"]), 4)
         self.assertNotIn("answer", result)
+        self.assertTrue(result["id"].startswith("s3-"))
 
     def test_iam_question(self):
         result = make_practice_question("IAM")

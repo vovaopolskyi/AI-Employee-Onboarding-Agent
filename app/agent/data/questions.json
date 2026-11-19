@@ -69,5 +69,21 @@
     },
     "answer": "B",
     "explanation": "S3 Object Lock supports retention periods that protect object versions against deletion or overwriting."
+  },
+
+  {
+  "id": "iam-001",
+  "topic": "IAM",
+  "difficulty": "easy",
+  "question": "Which AWS security principle grants users only the permissions required to perform their tasks?",
+  "options": {
+    "A": "Least privilege",
+    "B": "Administrator access",
+    "C": "Public access",
+    "D": "Root user access"
+  },
+  "answer": "A",
+  "explanation": "The principle of least privilege limits permissions to those necessary for a specific task."
   }
 ]
+

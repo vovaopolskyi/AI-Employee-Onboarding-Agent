@@ -5,44 +5,11 @@ from strands import tool
 from botocore.exceptions import ClientError
 from question_bank import get_question, check_answer
 
-QUESTIONS = {
-    "s3": {
-        "id": "s3-001",
-        "question": "Which S3 feature protects against accidental object deletion?",
-        "options": {
-            "A": "Transfer Acceleration",
-            "B": "Versioning",
-            "C": "Static Website Hosting",
-            "D": "Requester Pays",
-        },
-        "answer": "B",
-        "explanation": "Versioning preserves multiple versions of an object.",
-    },
-    "iam": {
-        "id": "iam-001",
-        "question": "Which principle grants only permissions required for a task?",
-        "options": {
-            "A": "Least privilege",
-            "B": "Full administrator access",
-            "C": "Public access",
-            "D": "Root account usage",
-        },
-        "answer": "A",
-        "explanation": "Least privilege limits unnecessary permissions.",
-    },
-}
+
 
 
 def make_practice_question(topic: str) -> dict:
-    question = QUESTIONS.get(topic.strip().lower())
-    if question is None:
-        return {"error": f"No questions available for: {topic}"}
-
-    return {
-        "id": question["id"],
-        "question": question["question"],
-        "options": question["options"],
-    }
+    return get_question(topic)
 
 
 @tool

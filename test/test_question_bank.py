@@ -14,7 +14,7 @@ from question_bank import load_questions, get_question, check_answer
 class QuestionBankTests(unittest.TestCase):
 
     def test_load_questions(self):
-        self.assertEqual(len(load_questions()), 5)
+        self.assertEqual(len(load_questions()), 6)
 
     def test_get_s3_question(self):
         question = get_question("S3")
