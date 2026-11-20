@@ -92,6 +92,7 @@ def _get_agent(session_id: str, actor_id: str) -> Agent:
         conversation_manager=_make_conversation_manager(),
         system_prompt=DEFAULT_SYSTEM_PROMPT,
         tools=tools,
+        callback_handler=None,
     )
 
 def create_app():
