@@ -1,25 +1,42 @@
 from functools import lru_cache
 
 from strands import Agent, tool
+
 from strands.agent.conversation_manager.null_conversation_manager import NullConversationManager
+
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
+
 from model.load import load_model
+
 from parse import parse_payload
+
 from study_materials import search_study_materials
+
+from progress import get_student_progress
+
 from practice import (
     generate_practice_question,
     check_practice_answer,
     generate_lab_task,
     verify_lab_task,
 )
+
 from lambda_lab import (
     generate_lambda_lab_task,
     verify_lambda_lab_task,
 )
+
 from iam_lab import (
     generate_iam_lab_task,
     verify_iam_lab_task,
 )
+
+from exam_mode import (
+    start_practice_exam,
+    submit_exam_answer,
+    finish_practice_exam,
+)
+
 
 
 DEFAULT_SYSTEM_PROMPT = "You are a helpful assistant. Use tools when appropriate."
@@ -37,6 +54,8 @@ tools.append(add_numbers)
 
 tools.append(search_study_materials)
 
+tools.append(get_student_progress)
+
 tools.extend([
     generate_practice_question,
     check_practice_answer,
@@ -52,6 +71,12 @@ tools.extend([
 tools.extend([
     generate_iam_lab_task,
     verify_iam_lab_task,
+])
+
+tools.extend([
+    start_practice_exam,
+    submit_exam_answer,
+    finish_practice_exam,
 ])
 
 def _make_conversation_manager():
