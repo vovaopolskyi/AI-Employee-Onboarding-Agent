@@ -26,3 +26,5 @@ agentcore/cdk/cdk.out/
 
 # Account-specific deployment targets
 agentcore/aws-targets.json
+
+app/agent/data/student_progress.json
