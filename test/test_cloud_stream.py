@@ -36,6 +36,12 @@ class CloudStreamTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "Runtime error"):
             invoke(client, "runtime-arn", "session", "prompt")
 
+    def test_accepts_response_body_without_iter_lines(self):
+        client = MagicMock()
+        client.invoke_agent_runtime.return_value = {"contentType": "text/event-stream",
+            "response": io.BytesIO(b'data: {"event":{"contentBlockDelta":{"delta":{"text":"OK"}}}}')}
+        self.assertEqual(invoke(client, "runtime-arn", "session", "prompt"), ([], "OK"))
+
 
 if __name__ == "__main__":
     unittest.main()
