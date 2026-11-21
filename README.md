@@ -175,8 +175,20 @@ The cloud diagram shows the **previously validated deployed prototype**, not the
 From the repository root in Windows PowerShell:
 
 ```powershell
+uv sync --locked --project app/agent --python 3.12
 & .\app\agent\.venv\Scripts\python.exe -m unittest discover -s test -p "test_*.py" -v
 ```
+
+GitHub Actions runs the unit suite and TypeScript CDK compilation on pushes and pull requests. These checks do not deploy resources or call Bedrock. Exam tests use temporary progress files, keeping local student history separate from test results.
+
+For a local agent server after configuring AWS credentials:
+
+```powershell
+Set-Location app/agent
+& .\.venv\Scripts\python.exe main.py
+```
+
+Use the runtime payload described in [`app/agent/README.md`](app/agent/README.md). Running model prompts requires Bedrock access and incurs inference charges.
 
 **Latest confirmed result: 53 tests passed (`OK`).** Tests cover Exam Mode, Student Progress, the question bank, study-materials search, and S3/Lambda/IAM lab verification. Unit tests include mocks for AWS API behavior; real AWS integration tests were performed separately.
 
@@ -189,6 +201,7 @@ Real AWS integration validation:
 - **Manual exam:** A two-question practice exam finished with correct grading and explanations.
 - **Progress persistence:** Completed exam records were visible from a subsequent Python process.
 - **Claude integration:** Bedrock Converse and Strands `add_numbers(7, 5)` calls succeeded; all 53 Python unit tests also passed after changing the local default model.
+- **Claude study-materials integration:** `test/smoke_study_agent.py` passed with the local Claude configuration and the `study-coach-sso` profile. Full exam and lab workflows with Claude remain pending.
 - **Console output:** Disabling the default Strands console callback (`callback_handler=None`) produced one clean response in a local smoke test. Further streamed-output validation is pending.
 
 The manual test driver `test_exam_manual.py` is for local development and is not required in the repository.
