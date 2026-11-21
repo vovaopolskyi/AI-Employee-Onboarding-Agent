@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { RUNTIME_SOURCE_FILES, withRuntimeSource } from '../lib/runtime-source';
+import { applyLockedDependencies } from '../lib/locked-dependencies';
 
 test('bundle source includes the question bank but excludes local data and secrets', () => {
   const temporaryRoot = resolve(tmpdir());
@@ -22,6 +23,13 @@ test('bundle source includes the question bank but excludes local data and secre
       staged = directory;
       assert.equal(readFileSync(join(directory, 'data/questions.json'), 'utf8'),
         'fixture:data/questions.json');
+      writeFileSync(join(directory, 'pyproject.toml'), '[project]\ndependencies = [\n "demo>=1",\n]\n');
+      applyLockedDependencies(directory, '# lock export\ndemo==1.2.3\nother==4.5 ; python_version >= \'3.12\'\n');
+      const manifest = readFileSync(join(directory, 'pyproject.toml'), 'utf8');
+      assert.ok(manifest.includes('demo==1.2.3'));
+      assert.ok(!manifest.includes('demo>=1'));
+      assert.throws(() => applyLockedDependencies(directory, 'demo>=1'), /pinned/);
+      assert.throws(() => applyLockedDependencies(directory, ''), /pinned/);
       for (const relative of ['data/student_progress.json', '.env', '.env.local', 'data/private.json']) {
         assert.equal(existsSync(join(directory, relative)), false, relative);
       }

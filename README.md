@@ -198,6 +198,8 @@ Practice and lab unit tests live in `test/test_practice.py`; the runtime module 
 
 CodeZip builds stage only the reviewed application files listed in `agentcore/cdk/lib/runtime-source.ts`. Local progress, environment files, and other unlisted files stay outside the bundle; `.gitignore` alone is not a packaging filter. Add new runtime modules or data files to that list when needed. Run `npm test` from `agentcore/cdk` to check source staging and compile CDK.
 
+Builds export exact dependencies from `uv.lock` into the temporary staged manifest before CodeZip installs them. The checked-in development manifest is unchanged, and an invalid or stale lock fails the build.
+
 Real AWS integration validation:
 
 - **S3:** Ownership and region checks; Versioning, Block Public Access, and default SSE-S3 encryption passed (3/3).
