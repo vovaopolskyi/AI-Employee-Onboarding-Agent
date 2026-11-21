@@ -200,6 +200,8 @@ CodeZip builds stage only the reviewed application files listed in `agentcore/cd
 
 Builds export exact dependencies from `uv.lock` into the temporary staged manifest before CodeZip installs them. The checked-in development manifest is unchanged, and an invalid or stale lock fails the build.
 
+The single-user cloud stack provisions a retained, versioned, HTTPS-only SSE-S3 progress bucket in the account-regional namespace, with SSE-C blocked and ABAC enabled. It configures the account and Claude profile explicitly. Runtime access is limited to the designated lab resources and the progress object prefix. No additional access-log destination or CloudTrail data-event trail is provisioned for this demo.
+
 Real AWS integration validation:
 
 - **S3:** Ownership and region checks; Versioning, Block Public Access, and default SSE-S3 encryption passed (3/3).
