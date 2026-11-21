@@ -203,7 +203,7 @@ Real AWS integration validation:
 - **Manual exam:** A two-question practice exam finished with correct grading and explanations.
 - **Progress persistence:** Completed exam records were visible from a subsequent Python process.
 - **Claude integration:** Bedrock Converse and Strands `add_numbers(7, 5)` calls succeeded; all 53 Python unit tests also passed after changing the local default model.
-- **Claude workflow integration:** The live smoke scenarios passed with the local Claude configuration and `study-coach-sso` profile. They checked study-materials search, a two-answer exam with a 50% score and saved progress, generation of all three lab tasks, and missing-account handling by all lab verifiers. Real-resource lab verification through Claude remains pending.
+- **Claude workflow integration:** The live smoke scenarios passed with the local Claude configuration and `study-coach-sso` profile. They checked study-materials search, a two-answer exam with a 50% score and saved progress, generation of all three lab tasks, and missing-account handling by all lab verifiers. The separate real-resource scenario also passed through Claude: S3 3/3, Lambda 5/5, and IAM 5/5. These results validate the local agent with developer credentials, not the deployed runtime identity.
 - **Console output:** Disabling the default Strands console callback (`callback_handler=None`) produced one clean response in a local smoke test. Further streamed-output validation is pending.
 
 The manual test driver `test_exam_manual.py` is for local development and is not required in the repository.
@@ -219,6 +219,14 @@ To check actual model tool calls, run the opt-in live smoke tests after setting 
 The exam scenario checks a two-question conversation, one correct and one wrong answer, grading, and saved progress. Smoke tests use a temporary progress file and do not modify local student history. They invoke Bedrock and incur inference charges; they are separate from the offline CI suite. The default scenario remains `study`.
 
 The `labs` scenario checks S3, Lambda, and IAM task generation and confirms that all three verifiers return a configuration error when the expected account ID is missing. It does not inspect real AWS lab resources. Use `--scenario all` to run all three scenarios.
+
+For verification against existing lab resources, use the separate opt-in scenario:
+
+```powershell
+& .\app\agent\.venv\Scripts\python.exe test/smoke_study_agent.py --scenario real-labs --account-id "<12-digit-account-id>" --lab-bucket "study-coach-lab-<account-id>-euc1" --lab-function "study-coach-lab-basic-lambda"
+```
+
+This calls the S3, Lambda, and IAM verification tools through the model and checks their actual scores (3/3, 5/5, and 5/5). The IAM role must be `study-coach-lab-s3-reader` with the prescribed inline policy. Use credentials with Bedrock inference access and read-only access to the designated lab configurations. `--scenario all` intentionally excludes real-resource verification; it requires explicit account and resource names.
 
 ## Local AWS Configuration
 
@@ -262,7 +270,7 @@ The `study-coach-readonly` profile may not have Bedrock streaming inference perm
 
 ## Known Issues and Roadmap
 
-- **Claude workflow validation:** Study-materials search, the full exam/progress scenario, lab task generation, and missing-account handling passed. Validate S3/Lambda/IAM verification against real lab resources through Claude next.
+- **Claude workflow validation:** Local study-materials, exam/progress, lab generation, missing-account handling, and real S3/Lambda/IAM verification passed through Claude. Repeat the relevant checks with the deployed runtime after its code and permissions are updated.
 - **AgentCore deployment:** Deploy the updated agent with Claude, the study/exam/lab tools, and appropriately scoped IAM permissions.
 - **Session management:** Replace in-memory exam sessions with durable, user-isolated storage for multi-user deployment.
 - **Progress storage:** Replace local JSON with a cloud-ready backend before production use.

@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -169,14 +170,53 @@ def check_labs(agent):
     print("PASS: all lab verifiers report missing account configuration")
 
 
+def check_real_labs(agent, args):
+    with patch.dict(os.environ, {"AWS_STUDY_ACCOUNT_ID": args.account_id}):
+        before = len(agent.messages)
+        agent(
+            "Verify these existing lab resources using read-only tools. "
+            f"Call verify_lab_task with bucket_name {args.lab_bucket}, "
+            f"verify_lambda_lab_task with function_name {args.lab_function}, "
+            f"and verify_iam_lab_task with role_name {args.lab_role}. "
+            "Call all three even if one fails. Do not create, modify, or delete "
+            "resources. Return only the score and pass/fail for each lab."
+        )
+    outputs = tool_outputs(agent, before)
+    for name, total in (
+        ("verify_lab_task", 3),
+        ("verify_lambda_lab_task", 5),
+        ("verify_iam_lab_task", 5),
+    ):
+        output = outputs.get(name, {})
+        require(output.get("passed") is True,
+                f"{name} did not pass: {json.dumps(output)}")
+        require(output.get("score") == total and output.get("total") == total,
+                f"Unexpected score from {name}")
+        print(f"PASS: {name} on existing AWS resource ({total}/{total})")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Live Bedrock checks; requires AWS credentials and incurs inference costs."
     )
     parser.add_argument(
-        "--scenario", choices=("study", "exam", "labs", "all"), default="study"
+        "--scenario", choices=("study", "exam", "labs", "real-labs", "all"),
+        default="study"
     )
+    parser.add_argument("--account-id", help="Expected 12-digit AWS lab account")
+    parser.add_argument("--lab-bucket", help="Existing study-coach-lab-* S3 bucket")
+    parser.add_argument("--lab-function", help="Existing study-coach-lab-* Lambda function")
+    parser.add_argument("--lab-role", default="study-coach-lab-s3-reader")
     args = parser.parse_args()
+    if args.scenario == "real-labs":
+        if not re.fullmatch(r"[0-9]{12}", args.account_id or ""):
+            parser.error("real-labs requires --account-id with 12 digits")
+        if not re.fullmatch(r"study-coach-lab-[a-z0-9.-]+", args.lab_bucket or ""):
+            parser.error("real-labs requires a study-coach-lab-* --lab-bucket")
+        if not re.fullmatch(r"study-coach-lab-[a-zA-Z0-9_-]+", args.lab_function or ""):
+            parser.error("real-labs requires a study-coach-lab-* --lab-function")
+        if args.lab_role != "study-coach-lab-s3-reader":
+            parser.error("--lab-role must be study-coach-lab-s3-reader")
 
     with tempfile.TemporaryDirectory(prefix="study-coach-smoke-") as directory:
         with patch.object(progress, "PROGRESS_FILE", Path(directory) / "progress.json"):
@@ -190,6 +230,9 @@ def main():
                 if args.scenario in ("labs", "all"):
                     agent = _get_agent(str(uuid4()), "smoke-test-user")
                     check_labs(agent)
+                if args.scenario == "real-labs":
+                    agent = _get_agent(str(uuid4()), "smoke-test-user")
+                    check_real_labs(agent, args)
             finally:
                 _get_agent.cache_clear()
 
