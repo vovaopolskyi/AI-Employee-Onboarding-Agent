@@ -202,6 +202,12 @@ Builds export exact dependencies from `uv.lock` into the temporary staged manife
 
 The single-user cloud stack provisions a retained, versioned, HTTPS-only SSE-S3 progress bucket in the account-regional namespace, with SSE-C blocked and ABAC enabled. It configures the account and Claude profile explicitly. Runtime access is limited to the designated lab resources and the progress object prefix. No additional access-log destination or CloudTrail data-event trail is provisioned for this demo.
 
+The dedicated CloudFormation execution role also needs `ssm:GetParameters` on the single `/cdk-bootstrap/hnb659fds/version` parameter so it can validate the existing CDK bootstrap version before applying the stack update.
+
+AgentCore validates CodeZip retrieval using the deployment caller's permissions too. The deployment role therefore needs `s3:GetObject` on the approved new and rollback ZIP objects, plus `s3:GetBucketLocation` on the CDK assets bucket. Update the explicit artifact allowlist when preparing a later release.
+
+The existing assets bucket uses KMS encryption. The deployment policy allows `kms:Decrypt` on its specific key, constrained to S3 in the deployment region and the assets bucket's encryption context. The progress bucket uses SSE-S3 and does not need this KMS permission.
+
 After deployment, `test/smoke_cloud_runtime.py --runtime-arn "<runtime-arn>" --progress-bucket "<bucket-name>"` checks streamed tool calls, a completed exam, the saved S3 record against the question bank, progress in a fresh runtime session, and all three real lab verifiers. It stops its test sessions and removes only its generated exam object's exact version. The caller needs runtime invocation/session-stop permissions and S3 read/delete-version access for that test record; the runtime itself is not granted delete access.
 
 Real AWS integration validation:
