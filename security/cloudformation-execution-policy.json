@@ -1,49 +1,67 @@
 {
-    "Version":  "2012-10-17",
-    "Statement":  [
-                      {
-                          "Effect":  "Allow",
-                          "Sid":  "ManageExistingRuntimeTags",
-                          "Resource":  "arn:aws:bedrock-agentcore:eu-central-1:054776129200:runtime/AWSStudyCoach_default_agent-ftNEInBBU3",
-                          "Action":  [
-                                         "bedrock-agentcore:GetAgentRuntime",
-                                         "bedrock-agentcore:TagResource",
-                                         "bedrock-agentcore:UntagResource",
-                                         "bedrock-agentcore:UpdateAgentRuntime"
-                                     ]
-                      },
-                      {
-                          "Effect":  "Allow",
-                          "Sid":  "ReadAndTagExecutionRole",
-                          "Resource":  "arn:aws:iam::054776129200:role/AgentCore-AWSStudyCoach-d-ApplicationRuntimeAgentRu-Jax59ePNLG2G",
-                          "Action":  [
-                                         "iam:GetRole",
-                                         "iam:GetRolePolicy",
-                                         "iam:ListRolePolicies",
-                                         "iam:ListRoleTags",
-                                         "iam:TagRole",
-                                         "iam:UntagRole"
-                                     ]
-                      },
-                      {
-                          "Effect":  "Allow",
-                          "Sid":  "PassExistingRoleToAgentCore",
-                          "Resource":  "arn:aws:iam::054776129200:role/AgentCore-AWSStudyCoach-d-ApplicationRuntimeAgentRu-Jax59ePNLG2G",
-                          "Condition":  {
-                                            "StringEquals":  {
-                                                                 "iam:PassedToService":  "bedrock-agentcore.amazonaws.com"
-                                                             }
-                                        },
-                          "Action":  "iam:PassRole"
-                      },
-                      {
-                          "Effect":  "Allow",
-                          "Sid":  "ManageStudyCoachRuntimeInlinePolicy",
-                          "Resource":  "arn:aws:iam::054776129200:role/AgentCore-AWSStudyCoach-d-ApplicationRuntimeAgentRu-Jax59ePNLG2G",
-                          "Action":  [
-                                         "iam:PutRolePolicy",
-                                         "iam:DeleteRolePolicy"
-                                     ]
-                      }
-                  ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Sid": "ManageExistingRuntimeTags",
+      "Resource": "arn:aws:bedrock-agentcore:eu-central-1:054776129200:runtime/AWSStudyCoach_default_agent-ftNEInBBU3",
+      "Action": [
+        "bedrock-agentcore:GetAgentRuntime",
+        "bedrock-agentcore:TagResource",
+        "bedrock-agentcore:UntagResource",
+        "bedrock-agentcore:UpdateAgentRuntime",
+        "bedrock-agentcore:ListTagsForResource"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Sid": "ReadAndTagExecutionRole",
+      "Resource": "arn:aws:iam::054776129200:role/AgentCore-AWSStudyCoach-d-ApplicationRuntimeAgentRu-Jax59ePNLG2G",
+      "Action": [
+        "iam:GetRole",
+        "iam:GetRolePolicy",
+        "iam:ListRolePolicies",
+        "iam:ListRoleTags",
+        "iam:TagRole",
+        "iam:UntagRole"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Sid": "PassExistingRoleToAgentCore",
+      "Resource": "arn:aws:iam::054776129200:role/AgentCore-AWSStudyCoach-d-ApplicationRuntimeAgentRu-Jax59ePNLG2G",
+      "Condition": {
+        "StringEquals": {
+          "iam:PassedToService": "bedrock-agentcore.amazonaws.com"
+        }
+      },
+      "Action": "iam:PassRole"
+    },
+    {
+      "Effect": "Allow",
+      "Sid": "ManageStudyCoachRuntimeInlinePolicy",
+      "Resource": "arn:aws:iam::054776129200:role/AgentCore-AWSStudyCoach-d-ApplicationRuntimeAgentRu-Jax59ePNLG2G",
+      "Action": [
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Sid": "ManageProgressBucket",
+      "Action": [
+        "s3:CreateBucket",
+        "s3:DeleteBucket",
+        "s3:Get*",
+        "s3:PutBucket*",
+        "s3:PutEncryptionConfiguration",
+        "s3:DeleteBucketPolicy",
+        "s3:TagResource",
+        "s3:UntagResource",
+        "s3:ListTagsForResource",
+        "s3:ListBucket"
+      ],
+      "Resource": "arn:aws:s3:::study-coach-progress-054776129200-eu-central-1-an"
+    }
+  ]
 }
