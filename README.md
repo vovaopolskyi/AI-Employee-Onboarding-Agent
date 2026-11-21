@@ -204,6 +204,8 @@ The single-user cloud stack provisions a retained, versioned, HTTPS-only SSE-S3 
 
 The dedicated CloudFormation execution role also needs `ssm:GetParameters` on the single `/cdk-bootstrap/hnb659fds/version` parameter so it can validate the existing CDK bootstrap version before applying the stack update.
 
+The CDK synthesizer explicitly selects `StudyCoachCloudFormationExecutionRole` for future deployments. The CDK deployment action role must be allowed to pass this exact role to CloudFormation; its project-specific pass-role policy is kept in `security/cdk-deployment-passrole.json`.
+
 AgentCore validates CodeZip retrieval using the deployment caller's permissions too. The deployment role therefore needs `s3:GetObject` on the approved new and rollback ZIP objects, plus `s3:GetBucketLocation` on the CDK assets bucket. Update the explicit artifact allowlist when preparing a later release.
 
 The existing assets bucket uses KMS encryption. The deployment policy allows `kms:Decrypt` on its specific key, constrained to S3 in the deployment region and the assets bucket's encryption context. The progress bucket uses SSE-S3 and does not need this KMS permission.
