@@ -192,7 +192,7 @@ Set-Location app/agent
 
 Use the runtime payload described in [`app/agent/README.md`](app/agent/README.md). Running model prompts requires Bedrock access and incurs inference charges.
 
-**Latest confirmed result: 59 tests passed (`OK`).** Tests cover Exam Mode, local and S3 Student Progress, the question bank, study-materials search, and S3/Lambda/IAM lab verification. Unit tests include mocks for AWS API behavior; real AWS integration tests were performed separately.
+**Latest confirmed result: 61 tests passed (`OK`).** Tests cover Exam Mode, local and S3 Student Progress, the question bank, study-materials search, S3/Lambda/IAM lab verification, and parsing streamed runtime tool calls. Unit tests include mocks for AWS API behavior; real AWS integration tests were performed separately.
 
 Practice and lab unit tests live in `test/test_practice.py`; the runtime module `app/agent/practice.py` contains only the question and S3 lab tools, without embedded test classes or test-time path changes.
 
@@ -201,6 +201,8 @@ CodeZip builds stage only the reviewed application files listed in `agentcore/cd
 Builds export exact dependencies from `uv.lock` into the temporary staged manifest before CodeZip installs them. The checked-in development manifest is unchanged, and an invalid or stale lock fails the build.
 
 The single-user cloud stack provisions a retained, versioned, HTTPS-only SSE-S3 progress bucket in the account-regional namespace, with SSE-C blocked and ABAC enabled. It configures the account and Claude profile explicitly. Runtime access is limited to the designated lab resources and the progress object prefix. No additional access-log destination or CloudTrail data-event trail is provisioned for this demo.
+
+After deployment, `test/smoke_cloud_runtime.py --runtime-arn "<runtime-arn>" --progress-bucket "<bucket-name>"` checks streamed tool calls, a completed exam, the saved S3 record against the question bank, progress in a fresh runtime session, and all three real lab verifiers. It stops its test sessions and removes only its generated exam object's exact version. The caller needs runtime invocation/session-stop permissions and S3 read/delete-version access for that test record; the runtime itself is not granted delete access.
 
 Real AWS integration validation:
 
