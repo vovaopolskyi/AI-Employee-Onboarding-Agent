@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { App } from 'aws-cdk-lib';
+import { App, DefaultStackSynthesizer } from 'aws-cdk-lib';
 import { AgentCoreProjectSpecSchema, readAgentCoreProject, resolveTargetStacks, transformAgentCoreJson } from '@aws/agentcore-cdk';
 import { AgentCoreStack } from '../lib/cdk-stack';
 import { resolve } from 'node:path';
@@ -33,6 +33,10 @@ try {
       deployedState: project.deployedState,
     })) {
       new AgentCoreStack(app, stack.stackName, {
+        synthesizer: new DefaultStackSynthesizer({
+          cloudFormationExecutionRole:
+            'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/StudyCoachCloudFormationExecutionRole',
+        }),
         env: stack.env,
         tags: stack.tags,
         description: stack.description,

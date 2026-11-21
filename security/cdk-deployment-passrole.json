@@ -1,0 +1,12 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "PassStudyCoachExecutionRole",
+    "Effect": "Allow",
+    "Action": "iam:PassRole",
+    "Resource": "arn:aws:iam::054776129200:role/StudyCoachCloudFormationExecutionRole",
+    "Condition": {
+      "StringEquals": {"iam:PassedToService": "cloudformation.amazonaws.com"}
+    }
+  }]
+}
