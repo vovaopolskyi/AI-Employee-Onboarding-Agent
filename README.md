@@ -203,10 +203,22 @@ Real AWS integration validation:
 - **Manual exam:** A two-question practice exam finished with correct grading and explanations.
 - **Progress persistence:** Completed exam records were visible from a subsequent Python process.
 - **Claude integration:** Bedrock Converse and Strands `add_numbers(7, 5)` calls succeeded; all 53 Python unit tests also passed after changing the local default model.
-- **Claude study-materials integration:** `test/smoke_study_agent.py` passed with the local Claude configuration and the `study-coach-sso` profile. Full exam and lab workflows with Claude remain pending.
+- **Claude workflow integration:** The live smoke scenarios passed with the local Claude configuration and `study-coach-sso` profile. They checked study-materials search, a two-answer exam with a 50% score and saved progress, generation of all three lab tasks, and missing-account handling by all lab verifiers. Real-resource lab verification through Claude remains pending.
 - **Console output:** Disabling the default Strands console callback (`callback_handler=None`) produced one clean response in a local smoke test. Further streamed-output validation is pending.
 
 The manual test driver `test_exam_manual.py` is for local development and is not required in the repository.
+
+To check actual model tool calls, run the opt-in live smoke tests after setting the AWS profile and region:
+
+```powershell
+& .\app\agent\.venv\Scripts\python.exe test/smoke_study_agent.py --scenario study
+& .\app\agent\.venv\Scripts\python.exe test/smoke_study_agent.py --scenario exam
+& .\app\agent\.venv\Scripts\python.exe test/smoke_study_agent.py --scenario labs
+```
+
+The exam scenario checks a two-question conversation, one correct and one wrong answer, grading, and saved progress. Smoke tests use a temporary progress file and do not modify local student history. They invoke Bedrock and incur inference charges; they are separate from the offline CI suite. The default scenario remains `study`.
+
+The `labs` scenario checks S3, Lambda, and IAM task generation and confirms that all three verifiers return a configuration error when the expected account ID is missing. It does not inspect real AWS lab resources. Use `--scenario all` to run all three scenarios.
 
 ## Local AWS Configuration
 
@@ -250,7 +262,7 @@ The `study-coach-readonly` profile may not have Bedrock streaming inference perm
 
 ## Known Issues and Roadmap
 
-- **Claude workflow validation:** Test Claude with Exam Mode, study-materials search, and S3/Lambda/IAM tools, not just `add_numbers`.
+- **Claude workflow validation:** Study-materials search, the full exam/progress scenario, lab task generation, and missing-account handling passed. Validate S3/Lambda/IAM verification against real lab resources through Claude next.
 - **AgentCore deployment:** Deploy the updated agent with Claude, the study/exam/lab tools, and appropriately scoped IAM permissions.
 - **Session management:** Replace in-memory exam sessions with durable, user-isolated storage for multi-user deployment.
 - **Progress storage:** Replace local JSON with a cloud-ready backend before production use.
