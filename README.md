@@ -179,7 +179,7 @@ uv sync --locked --project app/agent --python 3.12
 & .\app\agent\.venv\Scripts\python.exe -m unittest discover -s test -p "test_*.py" -v
 ```
 
-GitHub Actions runs the unit suite and TypeScript CDK compilation on pushes and pull requests. These checks do not deploy resources or call Bedrock. Exam tests use temporary progress files, keeping local student history separate from test results.
+GitHub Actions runs the Python unit suite, the CDK source-staging regression test, and TypeScript compilation on pushes and pull requests. These checks do not deploy resources or call Bedrock. Exam tests use temporary progress files, keeping local student history separate from test results.
 
 For a local agent server after configuring AWS credentials:
 
