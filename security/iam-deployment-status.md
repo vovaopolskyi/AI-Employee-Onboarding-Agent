@@ -1,6 +1,36 @@
 # AWS Study Coach deployment status
 
-## Completed single-user cloud demo
+## Cloud pause
+
+The cloud deployment was intentionally removed on 2026-11-21 at the owner's request to avoid continued project usage. The release code and its successful validation history remain in Git. Live test and chat commands must wait until the deployment is restored.
+
+Final teardown audit confirmed:
+
+- CloudFormation stack: DELETE_COMPLETE.
+- Project AgentCore runtimes and endpoints: removed.
+- Designated lab Lambda: removed.
+- Lab and progress S3 buckets: removed after checking/backing up data.
+- Runtime and lab Lambda log groups: absent.
+- Four backed-up project artifact versions: removed from the shared CDK assets bucket.
+- Shared assets bucket: zero objects/versions, delete markers, or multipart uploads.
+
+The shared CDK bootstrap and IAM configuration were preserved. The final audit snapshot is in agentcore/.cache/pause-backup/teardown-verification.json.
+
+Local restore material is kept in ignored agentcore/.cache/pause-backup/: the cloud-state snapshot, runtime logs, the current and previous CodeZip files, the lab Lambda ZIP, lab bucket configuration, and progress-0.json containing the completed exam present before teardown. These backups are not uploaded to GitHub.
+
+The scoped execution policy includes teardown of this exact runtime, its endpoint, workload identity, and runtime role. AgentCore workload-identity deletion needs authorization for both the identity and its parent directory; see the [service authorization reference](https://docs.aws.amazon.com/service-authorization/latest/reference/list_bedrock-agentcore.html). These permissions do not grant IAM administration over other project roles.
+
+To restore later:
+
+1. Refresh the AWS sign-in and review the saved configuration and source templates.
+2. Recreate the designated lab resources, using the saved Lambda ZIP/configuration if needed.
+3. Review the scoped CloudFormation creation permissions: the policy records historical physical runtime/role ARNs, and a fresh deployment can receive new IDs.
+4. Build the locked CodeZip, refresh the approved artifact allowlist, and create a reviewed deployment.
+5. Restore saved progress into the recreated private progress bucket and update the chat client's runtime ARN.
+
+GitHub Actions remains offline and does not automatically recreate AWS resources. Previous AWS usage charges are not undone by teardown.
+
+## Last verified single-user cloud demo before pause
 
 Verified on 2026-11-21:
 
@@ -27,11 +57,11 @@ This is a single-user learning demo accessed through IAM-authorized AgentCore ca
 - Generated smoke object versions, including the interrupted initial attempt's record, were removed. No user history existed in the new bucket at cleanup.
 - Ordinary terminal progress retrieval subsequently reported zero exams.
 
-## Applied controls
+## Controls of the last verified deployment
 
-The runtime identity policy and active boundary restrict inference to the approved Claude profile and its six EU destinations. Lab reads are scoped to the designated S3 bucket, Lambda function, and IAM role. Progress access permits list/read/write only under progress/exams/; the runtime has no progress-delete permission.
+The runtime identity policy and boundary restricted inference to the approved Claude profile and its six EU destinations. Lab reads were scoped to the designated S3 bucket, Lambda function, and IAM role. Progress access permitted list/read/write only under progress/exams/; the runtime had no progress-delete permission. The runtime role has now been removed; the boundary configuration is retained.
 
-The progress bucket has versioning, SSE-S3, blocked SSE-C, all four Block Public Access settings, BucketOwnerEnforced ownership, ABAC, and an HTTPS-only policy. It is retained on stack deletion. No additional access-log bucket or data-event trail was requested.
+The progress bucket had versioning, SSE-S3, blocked SSE-C, all four Block Public Access settings, BucketOwnerEnforced ownership, ABAC, and an HTTPS-only policy. CloudFormation retained it during stack deletion; explicit cleanup removed its backed-up exam version and then the bucket. No additional access-log bucket or data-event trail was requested.
 
 The scoped CloudFormation role permits existing runtime/role updates, management of this progress bucket, reading the exact bootstrap SSM parameter, and read/decrypt access to the approved new/rollback CodeZip objects. KMS access is constrained to the assets key through S3 and the assets encryption context.
 
@@ -58,4 +88,4 @@ Refresh the explicit new/rollback ZIP allowlist for future artifacts. A local bu
 
 ## Scope limits
 
-Completed results are durable; active exams remain process-local. Multi-user authentication/data isolation, a web interface, and extra labs are later extensions. Shared S3 history is for this single-user demo, not high-volume analytics.
+When deployed, completed results are durable and active exams remain process-local. During this pause, the saved exam is in the local backup rather than cloud storage. Multi-user authentication/data isolation, a web interface, and extra labs are later extensions. Shared S3 history is for the single-user demo, not high-volume analytics.

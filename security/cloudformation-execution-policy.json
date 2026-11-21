@@ -10,7 +10,8 @@
         "bedrock-agentcore:TagResource",
         "bedrock-agentcore:UntagResource",
         "bedrock-agentcore:UpdateAgentRuntime",
-        "bedrock-agentcore:ListTagsForResource"
+        "bedrock-agentcore:ListTagsForResource",
+        "bedrock-agentcore:DeleteAgentRuntime"
       ]
     },
     {
@@ -23,7 +24,10 @@
         "iam:ListRolePolicies",
         "iam:ListRoleTags",
         "iam:TagRole",
-        "iam:UntagRole"
+        "iam:UntagRole",
+        "iam:DeleteRole",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListInstanceProfilesForRole"
       ]
     },
     {
@@ -100,6 +104,24 @@
           ]
         }
       }
+    },
+    {
+      "Sid": "DeleteStudyCoachRuntimeIdentity",
+      "Effect": "Allow",
+      "Action": "bedrock-agentcore:DeleteWorkloadIdentity",
+      "Resource": [
+        "arn:aws:bedrock-agentcore:eu-central-1:054776129200:workload-identity-directory/default",
+        "arn:aws:bedrock-agentcore:eu-central-1:054776129200:workload-identity-directory/default/workload-identity/AWSStudyCoach_default_agent-ftNEInBBU3"
+      ]
+    },
+    {
+      "Sid": "DeleteStudyCoachRuntimeEndpoint",
+      "Effect": "Allow",
+      "Action": "bedrock-agentcore:DeleteAgentRuntimeEndpoint",
+      "Resource": [
+        "arn:aws:bedrock-agentcore:eu-central-1:054776129200:runtime/AWSStudyCoach_default_agent-ftNEInBBU3",
+        "arn:aws:bedrock-agentcore:eu-central-1:054776129200:runtime/AWSStudyCoach_default_agent-ftNEInBBU3/runtime-endpoint/DEFAULT"
+      ]
     }
   ]
 }
