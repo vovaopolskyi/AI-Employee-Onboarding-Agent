@@ -256,6 +256,8 @@ The `study-coach-readonly` profile may not have Bedrock streaming inference perm
 
 ### CloudFormation Deployment Permissions
 
+The [current preflight review](security/iam-deployment-status.md#preflight-review-2026-11-21) records the deployed runtime version, missing lab permissions and account configuration, CodeZip findings, and remaining deployment steps. A successful local smoke test does not establish permissions for the runtime identity.
+
 - The separate `StudyCoachCloudFormationExecutionRole` was created and initially tested with scoped permissions.
 - This role has **not** been assigned to the existing CloudFormation stack.
 - The deployment-policy template in [`security/`](security/) is still a draft, not production-ready.
