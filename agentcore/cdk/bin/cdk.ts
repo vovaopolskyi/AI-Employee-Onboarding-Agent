@@ -4,12 +4,20 @@ import { AgentCoreProjectSpecSchema, readAgentCoreProject, resolveTargetStacks, 
 import { AgentCoreStack } from '../lib/cdk-stack';
 import { resolve } from 'node:path';
 import { withRuntimeSource } from '../lib/runtime-source';
+import { execFileSync } from 'node:child_process';
+import { applyLockedDependencies } from '../lib/locked-dependencies';
 
 try {
   // The AgentCore CLI runs this app from agentcore/cdk/; readAgentCoreProject walks up to agentcore/.
   const project = readAgentCoreProject();
   const spec = AgentCoreProjectSpecSchema.parse(project.agentCoreJson);
   withRuntimeSource(resolve(project.projectRoot, 'app/agent'), (codeLocation) => {
+    const requirements = execFileSync('uv', [
+      'export', '--locked', '--no-dev', '--no-emit-project', '--no-hashes',
+      '--no-header', '--format', 'requirements-txt', '--project',
+      resolve(project.projectRoot, 'app/agent'),
+    ], { encoding: 'utf8' });
+    applyLockedDependencies(codeLocation, requirements);
     const agentCoreJson = {
       ...spec,
       runtimes: spec.runtimes.map((runtime) =>
