@@ -210,6 +210,8 @@ The existing assets bucket uses KMS encryption. The deployment policy allows `km
 
 After deployment, `test/smoke_cloud_runtime.py --runtime-arn "<runtime-arn>" --progress-bucket "<bucket-name>"` checks streamed tool calls, a completed exam, the saved S3 record against the question bank, progress in a fresh runtime session, and all three real lab verifiers. It stops its test sessions and removes only its generated exam object's exact version. The caller needs runtime invocation/session-stop permissions and S3 read/delete-version access for that test record; the runtime itself is not granted delete access.
 
+The smoke response reader supports both SDK `StreamingBody` and raw `HTTPResponse` bodies, so it does not depend on the optional `iter_lines()` method.
+
 Real AWS integration validation:
 
 - **S3:** Ownership and region checks; Versioning, Block Public Access, and default SSE-S3 encryption passed (3/3).

@@ -23,7 +23,9 @@ def invoke(client, arn, session, prompt):
     require("text/event-stream" in response.get("contentType", ""), "Expected SSE response")
     calls, active, text = [], {}, []
     with response["response"] as body:
-        for raw in body.iter_lines():
+        # SDK versions return either StreamingBody or urllib3 HTTPResponse.
+        # Both support read(); only StreamingBody exposes iter_lines().
+        for raw in body.read().splitlines():
             line = raw.decode("utf-8")
             if not line.startswith("data:"):
                 continue
