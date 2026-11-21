@@ -1,5 +1,7 @@
 # Study Coach agent
 
+> The cloud deployment is intentionally paused. Source code is preserved; restore the deployment before using a cloud runtime ARN. See the [pause and restore record](../../security/iam-deployment-status.md).
+
 The deployed Python application uses Strands, Amazon Bedrock, and AgentCore Runtime. See the [project README](../../README.md) for the verified deployment, terminal client, and tests.
 
 ## Files and state

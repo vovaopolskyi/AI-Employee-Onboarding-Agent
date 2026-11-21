@@ -2,7 +2,11 @@
 
 A Python study assistant using Strands Agents, Claude Haiku 4.5 on Amazon Bedrock, and Amazon Bedrock AgentCore.
 
-**The single-user learning demo is deployed and verified in AWS.** Cloud tests completed an exam, checked the saved score independently, loaded progress from a fresh runtime session, and passed the three real lab verifiers.
+> **Cloud status: intentionally paused; cloud resources removed on 2026-11-21.** The runtime, lab Lambda, both project buckets, runtime logs, and project-owned S3 artifacts have been deleted. Code and the verified release remain in Git. Local backups are in agentcore/.cache/pause-backup/ (excluded from Git). Restore the deployment before using cloud chat or live tests.
+
+The completed exam present before teardown was backed up as progress-0.json. The CloudFormation stack reached DELETE_COMPLETE. Shared CDK bootstrap infrastructure and IAM configuration were preserved; its assets bucket was verified empty, including versions and multipart uploads. Offline CI does not recreate cloud resources. Previous AWS usage charges remain payable.
+
+**The single-user learning demo was deployed and verified in AWS before pausing it.** Cloud tests completed an exam, checked the saved score independently, loaded progress from a fresh runtime session, and passed the three real lab verifiers.
 
 ## Features
 
@@ -15,9 +19,9 @@ A Python study assistant using Strands Agents, Claude Haiku 4.5 on Amazon Bedroc
 
 The practice passing threshold is **70%**, a project rule rather than an official AWS Certification passing score.
 
-## Verified deployment
+## Last verified deployment before pause
 
-| Component | State |
+| Component | Last verified state |
 | --- | --- |
 | Region | eu-central-1 |
 | CloudFormation | AgentCore-AWSStudyCoach-default - UPDATE_COMPLETE |
@@ -29,7 +33,7 @@ The practice passing threshold is **70%**, a project rule rather than an officia
 
 The model uses an EU cross-region inference profile. The runtime uses its own IAM role, not developer SSO credentials.
 
-## Run the cloud demo
+## Run after restoring the cloud deployment
 
 Requires Python 3.12, uv, and AWS credentials authorized to invoke and stop this runtime. From the repository root in Windows PowerShell:
 
@@ -38,7 +42,7 @@ uv sync --locked --project app/agent --python 3.12
 $env:AWS_PROFILE = "study-coach-sso"
 $env:AWS_REGION = "eu-central-1"
 $env:AWS_DEFAULT_REGION = "eu-central-1"
-$runtimeArn = "arn:aws:bedrock-agentcore:eu-central-1:054776129200:runtime/AWSStudyCoach_default_agent-ftNEInBBU3"
+$runtimeArn = "<runtime-arn-from-the-restored-deployment>"
 
 & ./app/agent/.venv/Scripts/python.exe app/chat.py --runtime-arn $runtimeArn
 ~~~
@@ -94,6 +98,8 @@ Runtime access is scoped to these designated resources. Clean up student-created
 npm.cmd --prefix agentcore/cdk test
 ~~~
 
+The live checks below require restored resources and incur AWS usage charges. Do not run them while paused. The offline unit tests above can still be used.
+
 Opt-in local agent checks call Bedrock but use temporary progress storage:
 
 ~~~powershell
@@ -109,7 +115,7 @@ The deployed-runtime check also passed:
 
 It verifies actual tool calls, compares the saved score with the question bank, stops the first session, checks progress in a fresh session, and verifies all three labs. It removes only its generated exam object's exact version and closes its sessions. Its caller needs additional S3 read/list/delete-version permissions; the runtime itself has no progress-delete permission.
 
-Smoke records have been cleaned up. Ordinary terminal progress retrieval confirmed zero exams afterward. The test_exam_manual.py driver is optional local development material.
+Smoke records were cleaned up after validation. A later completed user exam was preserved in the local pause backup before removing the cloud store. The test_exam_manual.py driver is optional local development material.
 
 ## Architecture
 
