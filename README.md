@@ -6,6 +6,8 @@ The project combines AWS certification preparation, interactive practice exams, 
 
 > **Deployment status:** An initial AgentCore Runtime prototype is deployed in `eu-central-1` and was verified with Amazon Nova Micro and the `add_numbers` tool. The expanded study tools, AWS labs, Exam Mode, Student Progress, and the new Claude model configuration have been tested **locally** but have **not yet been deployed to AgentCore**.
 
+For terminal access to the deployed runtime, use `app/chat.py --runtime-arn "<runtime-arn>"` with the agent virtual-environment Python. It keeps a runtime session across turns and closes that session on exit. Use `--prompt "Show my progress"` for a one-shot request. This client sends JSON through boto3 directly, avoiding PowerShell/native CLI JSON-quoting differences. Completed results persist in S3; unfinished exams end when the terminal session is closed.
+
 ## Features
 
 ### Certification Question Bank
