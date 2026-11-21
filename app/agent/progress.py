@@ -7,6 +7,7 @@ from pathlib import Path
 from threading import Lock
 
 from strands import tool
+import progress_s3
 
 
 PROGRESS_FILE = (
@@ -19,6 +20,9 @@ PROGRESS_LOCK = Lock()
 
 
 def _load_data():
+    bucket = os.environ.get("PROGRESS_S3_BUCKET")
+    if bucket:
+        return {"exams": progress_s3.load_records(bucket)}
     if not PROGRESS_FILE.exists():
         return {"exams": []}
 
@@ -60,10 +64,23 @@ def _write_data(data):
 def save_exam_result(session_id: str, result: dict) -> dict:
     """Save a completed exam once.
 
-    This is a single-student local development store.
+    Uses S3 when configured, otherwise the local development file.
     """
     if result.get("status") != "completed":
         raise ValueError("Only completed exams can be saved")
+
+    record = {
+        "session_id": session_id,
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+        "score": result["score"],
+        "total": result["total"],
+        "percentage": result["percentage"],
+        "passed": result["passed"],
+        "results": result["results"],
+    }
+    bucket = os.environ.get("PROGRESS_S3_BUCKET")
+    if bucket:
+        return progress_s3.save_record(bucket, session_id, record)
 
     with PROGRESS_LOCK:
         data = _load_data()
@@ -74,18 +91,6 @@ def save_exam_result(session_id: str, result: dict) -> dict:
         ):
             return {"saved": False, "reason": "already_exists"}
 
-        record = {
-            "session_id": session_id,
-            "completed_at": datetime.now(
-                timezone.utc
-            ).isoformat(),
-            "score": result["score"],
-            "total": result["total"],
-            "percentage": result["percentage"],
-            "passed": result["passed"],
-            "results": result["results"],
-        }
-
         data["exams"].append(record)
         _write_data(data)
 
@@ -93,11 +98,11 @@ def save_exam_result(session_id: str, result: dict) -> dict:
 
 
 def get_progress_summary() -> dict:
-    """Return statistics for locally saved exams."""
+    """Return statistics for completed exams in the configured store."""
     with PROGRESS_LOCK:
         data = _load_data()
 
-    exams = data["exams"]
+    exams = sorted(data["exams"], key=lambda exam: exam["completed_at"])
 
     if not exams:
         return {
@@ -159,5 +164,5 @@ def get_progress_summary() -> dict:
 
 @tool
 def get_student_progress() -> dict:
-    """Show local AWS certification practice exam progress."""
+    """Show saved AWS certification practice exam progress."""
     return get_progress_summary()

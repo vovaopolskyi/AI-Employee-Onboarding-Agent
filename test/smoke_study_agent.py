@@ -218,7 +218,8 @@ def main():
         if args.lab_role != "study-coach-lab-s3-reader":
             parser.error("--lab-role must be study-coach-lab-s3-reader")
 
-    with tempfile.TemporaryDirectory(prefix="study-coach-smoke-") as directory:
+    # Local smoke tests must not write into a configured cloud progress store.
+    with patch.dict(os.environ, {"PROGRESS_S3_BUCKET": ""}), tempfile.TemporaryDirectory(prefix="study-coach-smoke-") as directory:
         with patch.object(progress, "PROGRESS_FILE", Path(directory) / "progress.json"):
             try:
                 if args.scenario in ("study", "all"):

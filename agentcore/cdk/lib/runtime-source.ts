@@ -15,6 +15,7 @@ export const RUNTIME_SOURCE_FILES = [
   'study_materials.py',
   'exam_mode.py',
   'progress.py',
+  'progress_s3.py',
   'lambda_lab.py',
   'iam_lab.py',
   'model/__init__.py',

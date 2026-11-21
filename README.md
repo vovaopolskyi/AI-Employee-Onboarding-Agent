@@ -73,6 +73,8 @@ Implementation: [`app/agent/progress.py`](app/agent/progress.py).
 
 Local storage: `app/agent/data/student_progress.json` (excluded from Git through `.gitignore`). This is a **single-user local development store**, not a production database. Cloud deployment requires durable storage, authenticated user identity, data isolation, and concurrency-safe session handling.
 
+For the single-user AWS demo, `PROGRESS_S3_BUCKET` selects a private S3 backend. Each completed exam is an immutable JSON object under `progress/exams/`; conditional writes prevent duplicates and separate objects avoid lost updates between runtime processes. Completed results survive runtime restarts. Active exams still live in process memory, and this backend does not provide multi-user identity or isolation. If S3 fails, the error is surfaced rather than silently falling back to local storage. Local smoke tests explicitly disable the S3 backend to preserve cloud results.
+
 ## AI Model Configuration
 
 The default model for **local development** is now **Anthropic Claude Haiku 4.5**, accessed through Amazon Bedrock. Previously, the agent used Amazon Nova Micro.
@@ -190,7 +192,7 @@ Set-Location app/agent
 
 Use the runtime payload described in [`app/agent/README.md`](app/agent/README.md). Running model prompts requires Bedrock access and incurs inference charges.
 
-**Latest confirmed result: 53 tests passed (`OK`).** Tests cover Exam Mode, Student Progress, the question bank, study-materials search, and S3/Lambda/IAM lab verification. Unit tests include mocks for AWS API behavior; real AWS integration tests were performed separately.
+**Latest confirmed result: 59 tests passed (`OK`).** Tests cover Exam Mode, local and S3 Student Progress, the question bank, study-materials search, and S3/Lambda/IAM lab verification. Unit tests include mocks for AWS API behavior; real AWS integration tests were performed separately.
 
 Practice and lab unit tests live in `test/test_practice.py`; the runtime module `app/agent/practice.py` contains only the question and S3 lab tools, without embedded test classes or test-time path changes.
 

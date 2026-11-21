@@ -15,6 +15,7 @@ source = { editable = "." }
 dependencies = [
     { name = "aws-opentelemetry-distro" },
     { name = "bedrock-agentcore", extra = ["strands-agents"] },
+    { name = "boto3" },
     { name = "botocore", extra = ["crt"] },
     { name = "strands-agents" },
 ]
@@ -23,6 +24,7 @@ dependencies = [
 requires-dist = [
     { name = "aws-opentelemetry-distro", specifier = "~=0.21.0" },
     { name = "bedrock-agentcore", extras = ["strands-agents"], specifier = ">=1.18.1,<2.0.0" },
+    { name = "boto3", specifier = "~=1.43.0" },
     { name = "botocore", extras = ["crt"], specifier = "~=1.43.0" },
     { name = "strands-agents", specifier = "==1.64.0" },
 ]
