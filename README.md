@@ -201,10 +201,19 @@ Real AWS integration validation:
 - **Manual exam:** A two-question practice exam finished with correct grading and explanations.
 - **Progress persistence:** Completed exam records were visible from a subsequent Python process.
 - **Claude integration:** Bedrock Converse and Strands `add_numbers(7, 5)` calls succeeded; all 53 Python unit tests also passed after changing the local default model.
-- **Claude study-materials integration:** `test/smoke_study_agent.py` passed with the local Claude configuration and the `study-coach-sso` profile. Full exam and lab workflows with Claude remain pending.
+- **Claude study-materials and exam integration:** The live smoke scenarios passed with the local Claude configuration and `study-coach-sso` profile. The exam check verified two answers, a 50% score, and saved progress. Lab workflows with Claude remain pending.
 - **Console output:** Disabling the default Strands console callback (`callback_handler=None`) produced one clean response in a local smoke test. Further streamed-output validation is pending.
 
 The manual test driver `test_exam_manual.py` is for local development and is not required in the repository.
+
+To check actual model tool calls, run the opt-in live smoke tests after setting the AWS profile and region:
+
+```powershell
+& .\app\agent\.venv\Scripts\python.exe test/smoke_study_agent.py --scenario study
+& .\app\agent\.venv\Scripts\python.exe test/smoke_study_agent.py --scenario exam
+```
+
+The exam scenario checks a two-question conversation, one correct and one wrong answer, grading, and saved progress. Smoke tests use a temporary progress file and do not modify local student history. They invoke Bedrock and incur inference charges; they are separate from the offline CI suite. The default scenario remains `study`.
 
 ## Local AWS Configuration
 
@@ -248,7 +257,7 @@ The `study-coach-readonly` profile may not have Bedrock streaming inference perm
 
 ## Known Issues and Roadmap
 
-- **Claude workflow validation:** Test Claude with Exam Mode, study-materials search, and S3/Lambda/IAM tools, not just `add_numbers`.
+- **Claude workflow validation:** Study-materials search and the full exam/progress scenario passed. Validate S3/Lambda/IAM workflows with Claude next.
 - **AgentCore deployment:** Deploy the updated agent with Claude, the study/exam/lab tools, and appropriately scoped IAM permissions.
 - **Session management:** Replace in-memory exam sessions with durable, user-isolated storage for multi-user deployment.
 - **Progress storage:** Replace local JSON with a cloud-ready backend before production use.
