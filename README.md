@@ -179,7 +179,7 @@ uv sync --locked --project app/agent --python 3.12
 & .\app\agent\.venv\Scripts\python.exe -m unittest discover -s test -p "test_*.py" -v
 ```
 
-GitHub Actions runs the unit suite and TypeScript CDK compilation on pushes and pull requests. These checks do not deploy resources or call Bedrock. Exam tests use temporary progress files, keeping local student history separate from test results.
+GitHub Actions runs the Python unit suite, the CDK source-staging regression test, and TypeScript compilation on pushes and pull requests. These checks do not deploy resources or call Bedrock. Exam tests use temporary progress files, keeping local student history separate from test results.
 
 For a local agent server after configuring AWS credentials:
 
@@ -193,6 +193,8 @@ Use the runtime payload described in [`app/agent/README.md`](app/agent/README.md
 **Latest confirmed result: 53 tests passed (`OK`).** Tests cover Exam Mode, Student Progress, the question bank, study-materials search, and S3/Lambda/IAM lab verification. Unit tests include mocks for AWS API behavior; real AWS integration tests were performed separately.
 
 Practice and lab unit tests live in `test/test_practice.py`; the runtime module `app/agent/practice.py` contains only the question and S3 lab tools, without embedded test classes or test-time path changes.
+
+CodeZip builds stage only the reviewed application files listed in `agentcore/cdk/lib/runtime-source.ts`. Local progress, environment files, and other unlisted files stay outside the bundle; `.gitignore` alone is not a packaging filter. Add new runtime modules or data files to that list when needed. Run `npm test` from `agentcore/cdk` to check source staging and compile CDK.
 
 Real AWS integration validation:
 

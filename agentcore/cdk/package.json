@@ -6,6 +6,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "test": "npm run build && node --test dist/test/runtime-source.test.js",
     "watch": "tsc -w",
     "cdk": "npm run build && cdk",
     "clean": "rm -rf dist"
