@@ -1,8 +1,11 @@
 import { AgentCoreApplication, type AgentCoreApplicationProps } from '@aws/agentcore-cdk';
-import { ArnFormat, Stack, Tags, type StackProps } from 'aws-cdk-lib';
+import { ArnFormat, CfnOutput, RemovalPolicy, Stack, Tags, type StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 export interface AgentCoreStackProps extends StackProps {
   /** Props for the AgentCore application, produced by transformAgentCoreJson from agentcore/agentcore.json. */
   application: AgentCoreApplicationProps;
@@ -19,6 +22,24 @@ export class AgentCoreStack extends Stack {
   constructor(scope: Construct, id: string, props: AgentCoreStackProps) {
     super(scope, id, props);
     this.application = new AgentCoreApplication(this, 'Application', props.application);
+    const progressBucket = new s3.Bucket(this, 'ProgressBucket', {
+      bucketNamePrefix: 'study-coach-progress',
+      bucketNamespace: s3.BucketNamespace.ACCOUNT_REGIONAL,
+      versioned: true,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      bucketKeyEnabled: true,
+      blockedEncryptionTypes: [s3.BlockedEncryptionType.SSE_C],
+      abacStatus: true,
+      enforceSSL: true,
+      removalPolicy: RemovalPolicy.RETAIN,
+    });
+    const runtime = this.application.runtime('agent');
+    (progressBucket.policy!.node.defaultChild as s3.CfnBucketPolicy)
+      .addPropertyOverride('PolicyDocument.Statement.0.Sid', 'DenyInsecureTransport');
+    runtime.addEnvironmentVariable('PROGRESS_S3_BUCKET', progressBucket.bucketName);
+    runtime.addEnvironmentVariable('AWS_STUDY_ACCOUNT_ID', this.account);
+    runtime.addEnvironmentVariable('BEDROCK_MODEL_ID', 'eu.anthropic.claude-haiku-4-5-20251001-v1:0');
+    new CfnOutput(this, 'ProgressBucketName', { value: progressBucket.bucketName });
     const runtimeBoundary = iam.ManagedPolicy.fromManagedPolicyName(
       this,
       'RuntimePermissionsBoundary',
@@ -115,6 +136,29 @@ export class AgentCoreStack extends Stack {
       `arn:${Stack.of(this).partition}:s3:::cdk-hnb659fds-assets-` +
       `${Stack.of(this).account}-${Stack.of(this).region}`;
 
+    const generated = JSON.parse(readFileSync(join(props.application.projectRoot,
+      'security/runtime-actions.generated.json'), 'utf8')) as { labs: string[]; progress: string[] };
+    const labStatements = [
+      { Effect: 'Allow', Action: generated.labs.filter((action) => action.startsWith('s3:')),
+        Resource: `arn:${this.partition}:s3:::study-coach-lab-${this.account}-euc1` },
+      { Effect: 'Allow', Action: generated.labs.filter((action) => action.startsWith('lambda:')),
+        Resource: `arn:${this.partition}:lambda:${this.region}:${this.account}:function:study-coach-lab-basic-lambda` },
+      { Effect: 'Allow', Action: generated.labs.filter((action) => action.startsWith('iam:')),
+        Resource: `arn:${this.partition}:iam::${this.account}:role/study-coach-lab-s3-reader` },
+    ];
+    // Autopilot includes optional API features. This store uses SSE-S3, no ACLs,
+    // no object versions/tags/legal holds, and no Object Lambda access points.
+    const objectActions = generated.progress.filter((action) =>
+      ['s3:GetObject', 's3:PutObject'].includes(action));
+    if (objectActions.length !== 2 || !generated.progress.includes('s3:ListBucket')) {
+      throw new Error('Generated progress actions do not cover the configured S3 store');
+    }
+    const progressStatements = [
+      { Effect: 'Allow', Action: 's3:ListBucket', Resource: progressBucket.bucketArn,
+        Condition: { StringLike: { 's3:prefix': 'progress/exams/*' } } },
+      { Effect: 'Allow', Action: objectActions, Resource: progressBucket.arnForObjects('progress/exams/*') },
+    ];
+
     runtimePolicy.addPropertyOverride('PolicyDocument.Statement', [
       ...otherStatements,
       {
@@ -126,6 +170,8 @@ export class AgentCoreStack extends Stack {
         ],
       },
       ...claudeStatements,
+      ...labStatements,
+      ...progressStatements,
     ]);
 
     // Example: give a runtime a DynamoDB table.
