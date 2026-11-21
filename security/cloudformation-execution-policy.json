@@ -9,7 +9,8 @@
         "bedrock-agentcore:GetAgentRuntime",
         "bedrock-agentcore:TagResource",
         "bedrock-agentcore:UntagResource",
-        "bedrock-agentcore:UpdateAgentRuntime"
+        "bedrock-agentcore:UpdateAgentRuntime",
+        "bedrock-agentcore:ListTagsForResource"
       ]
     },
     {
