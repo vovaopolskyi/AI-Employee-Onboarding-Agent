@@ -1,7 +1,9 @@
 
 import sys
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(
     0,
@@ -14,12 +16,21 @@ from exam_mode import (
     submit_answer,
     finish_exam,
 )
+import progress
 
 
 class ExamModeTests(unittest.TestCase):
 
     def setUp(self):
         EXAMS.clear()
+        self.addCleanup(EXAMS.clear)
+        temp_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(temp_dir.cleanup)
+        patcher = patch.object(
+            progress, "PROGRESS_FILE", Path(temp_dir.name) / "progress.json"
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def test_start_exam(self):
         exam = start_exam("all", 10)
