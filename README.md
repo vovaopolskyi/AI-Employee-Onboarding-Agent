@@ -192,6 +192,8 @@ Use the runtime payload described in [`app/agent/README.md`](app/agent/README.md
 
 **Latest confirmed result: 53 tests passed (`OK`).** Tests cover Exam Mode, Student Progress, the question bank, study-materials search, and S3/Lambda/IAM lab verification. Unit tests include mocks for AWS API behavior; real AWS integration tests were performed separately.
 
+Practice and lab unit tests live in `test/test_practice.py`; the runtime module `app/agent/practice.py` contains only the question and S3 lab tools, without embedded test classes or test-time path changes.
+
 Real AWS integration validation:
 
 - **S3:** Ownership and region checks; Versioning, Block Public Access, and default SSE-S3 encryption passed (3/3).
