@@ -194,6 +194,8 @@ Use the runtime payload described in [`app/agent/README.md`](app/agent/README.md
 
 Practice and lab unit tests live in `test/test_practice.py`; the runtime module `app/agent/practice.py` contains only the question and S3 lab tools, without embedded test classes or test-time path changes.
 
+CodeZip builds stage only the reviewed application files listed in `agentcore/cdk/lib/runtime-source.ts`. Local progress, environment files, and other unlisted files stay outside the bundle; `.gitignore` alone is not a packaging filter. Add new runtime modules or data files to that list when needed. Run `npm test` from `agentcore/cdk` to check source staging and compile CDK.
+
 Real AWS integration validation:
 
 - **S3:** Ownership and region checks; Versioning, Block Public Access, and default SSE-S3 encryption passed (3/3).
