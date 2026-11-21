@@ -1,5 +1,7 @@
 # Study Coach Deployment Permissions
 
+> Historical design and migration notes. The completed deployment, active boundary, verified permissions, and recovery guidance are recorded in [iam-deployment-status.md](iam-deployment-status.md). Statements below describe earlier stages rather than the current cloud status.
+
 ## Goal
 Replace broad AdministratorAccess with scoped deployment permissions.
 

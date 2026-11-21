@@ -1,73 +1,50 @@
-AWS Study Coach agent, built with Strands and Amazon Bedrock AgentCore. See the [project README](../../README.md) for features, AWS profiles, test commands, and deployment status.
+# Study Coach agent
 
-# Layout
+The deployed Python application uses Strands, Amazon Bedrock, and AgentCore Runtime. See the [project README](../../README.md) for the verified deployment, terminal client, and tests.
 
-The generated application code lives at the agent root directory. At the root, there is a `.gitignore` file, an
-`agentcore/` folder which represents the configurations and state associated with this project. Other `agentcore`
-commands like `deploy`, `dev`, and `invoke` rely on the configuration stored here.
+## Files and state
 
-## Agent Root
+- main.py registers the study, exam, progress, and lab tools.
+- model/load.py creates the Claude Haiku 4.5 Bedrock model.
+- exam_mode.py keeps active exams in process memory.
+- progress.py selects local JSON or durable S3 completed-exam storage.
+- progress_s3.py writes conditional, per-exam S3 objects.
+- data/questions.json contains the predefined question bank.
 
-The main entrypoint to your app is defined in `main.py`. Using the AgentCore SDK `@app.entrypoint` decorator, this
-file defines a Starlette ASGI app with the Strands Agent SDK running within.
-
-`model/load.py` instantiates the chosen model provider.
-
-## Memory
-
-AgentCore Memory is not provisioned: `agentcore/agentcore.json` has an empty `memories` list,
-and `main.py` does not attach the helper in `memory/session.py` to the agent.
-Conversation history is kept in cached agent instances in process memory. Exams also use
-process memory; student progress uses a single local JSON file. Restarting the server loses
-conversations and active exams. These stores do not provide authenticated user isolation.
-
-## Input Validation
-
-Validate invocation input before forwarding it to Strands. Keep plain prompts typed as strings. If the app accepts a
-caller-supplied message history, retain `_strip_trailing_tool_use()` in `parse.py`, which normalizes the history tail
-before invoking the agent.
+AgentCore Memory is not provisioned. The helper in memory/session.py is not attached to the agent. Conversation history lives in cached agent instances within the running process.
 
 ## Payload
 
-The Runtime accepts a JSON object. `parse_payload()` reads:
+The runtime accepts a JSON object with prompt (a string) or messages (caller-supplied history). messages takes precedence. parse.py validates the payload and normalizes trailing toolUse blocks in history.
 
-- `prompt` (string) — a single user message. Used when `messages` is absent; defaults to `""`.
-- `messages` (array) — a full conversation history (`[{"role": ..., "content": [...]}]`). Takes precedence over `prompt`; trailing `toolUse` blocks are stripped before the agent runs.
-- `actorId` (string, optional) — part of the in-process agent cache key. Defaults to `"default"`. This caller-supplied value is not authenticated identity and does not isolate student progress.
+Optional actorId defaults to default. It is part of the cached agent key, not authenticated identity, and does not isolate progress. This deployment is for a single authorized user.
 
-Provide either `prompt` or `messages`. The `session_id` is not in the body — it comes from the `X-Amzn-Bedrock-AgentCore-Runtime-Session-Id` header (`context.session_id`); reuse it to continue a conversation.
+The runtime session ID comes from AgentCore request context, not the payload. Reuse a session to continue a conversation.
 
-```json
-{ "prompt": "Start a two-question S3 practice exam", "actorId": "user-123" }
-```
+~~~json
+{"prompt":"Start a two-question S3 practice exam","actorId":"demo-user"}
+~~~
 
-## Environment Variables
+Use app/chat.py from the repository root for interactive cloud access.
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `AWS_REGION` | No | Bedrock region, defaults to `eu-central-1` |
-| `BEDROCK_MODEL_ID` | No | Defaults to the Claude Haiku 4.5 EU inference profile |
-| `AWS_PROFILE` | No | Local AWS credentials profile; use the execution role in AWS |
-| `AWS_STUDY_ACCOUNT_ID` | For lab checks | Expected 12-digit AWS account ID |
+## Environment
 
-# Developing locally
+| Variable | Use |
+| --- | --- |
+| AWS_REGION | Bedrock region; defaults to eu-central-1 |
+| BEDROCK_MODEL_ID | Defaults to the Claude Haiku 4.5 EU inference profile |
+| AWS_PROFILE | Local credentials profile; AWS uses the runtime role |
+| AWS_STUDY_ACCOUNT_ID | Expected lab account; configured by CDK in AWS |
+| PROGRESS_S3_BUCKET | Durable completed-exam store; configured by CDK in AWS |
 
-If installation was successful, a virtual environment is already created with dependencies installed.
+Without PROGRESS_S3_BUCKET, progress uses data/student_progress.json. Local smoke tests disable the S3 backend and patch a temporary file. Cloud smoke tests verify S3 persistence and remove only their own record version.
 
-Activate the environment with `source .venv/bin/activate` on macOS/Linux, `.venv\Scripts\activate.bat` in Windows
-Command Prompt, or `.\.venv\Scripts\activate.ps1` in Windows PowerShell.
+Completed cloud results survive runtime restarts. Active exams and conversations do not. Finish an exam before closing its session.
 
-`agentcore dev` will start a local server on 0.0.0.0:8080.
+## Build
 
-# Deployment
+Install from the repository root using uv sync --locked --project app/agent --python 3.12.
 
-Before deployment, review the [project deployment status](../../README.md#security-and-deployment-status)
-and [IAM transition checklist](../../security/iam-deployment-status.md). The expanded agent has
-not yet been validated in the deployed runtime. Review the CodeZip artifact, runtime permissions,
-permissions boundary, and CloudFormation execution role before updating AWS resources.
+CDK stages only reviewed runtime files and applies exact lockfile dependencies to the staged manifest. Local progress and environment files are excluded.
 
-Invoke the deployed Runtime with its native payload:
-
-```bash
-agentcore invoke --runtime agent --payload '{"prompt":"Hello!"}'
-```
+See the [current deployment state](../../security/iam-deployment-status.md) before changing AWS resources.

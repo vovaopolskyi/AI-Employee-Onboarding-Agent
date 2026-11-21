@@ -1,63 +1,61 @@
-﻿# AWS Study Coach IAM deployment status
+# AWS Study Coach deployment status
 
-## Previously verified
-- Claude Haiku 4.5 Runtime identity policy is defined in CDK.
-- Runtime permissions boundary is attached.
-- Non-Bedrock IAM statements match deployed permissions.
-- IAM Simulator allows Claude and denies Nova.
-- Scoped CloudFormation execution policy is applied and validated.
-- CodeZip and 53 automated tests passed.
+## Completed single-user cloud demo
 
-## Pending deployment
-- CloudFormation stack still uses the CDK bootstrap execution role with AdministratorAccess.
-- StudyCoachCloudFormationExecutionRole is not yet assigned to the stack.
-- AWSStudyCoachRuntimeBoundary v1 is still active.
-- Claude-only boundary draft has not been activated.
-- Cloud deployment and smoke tests remain pending.
+Verified on 2026-11-21:
 
-## Planned sequence
-1. Verify the scoped CloudFormation role is sufficient for update and rollback.
-2. Review the final CloudFormation changes and execution-role transition.
-3. Deploy Claude Runtime and verify functionality.
-4. Activate the Claude-only boundary as a new managed-policy version.
-5. Repeat smoke tests and validate effective IAM permissions.
+- CloudFormation AgentCore-AWSStudyCoach-default: **UPDATE_COMPLETE**.
+- AgentCore Runtime AWSStudyCoach_default_agent-ftNEInBBU3: **READY**, version **3**, in eu-central-1.
+- Model: eu.anthropic.claude-haiku-4-5-20251001-v1:0.
+- Runtime boundary AWSStudyCoachRuntimeBoundary: active version **v3**.
+- Stack execution role: StudyCoachCloudFormationExecutionRole.
+- Progress bucket: study-coach-progress-054776129200-eu-central-1-an.
+- Normal terminal access through app/chat.py succeeded and reported zero exams after smoke cleanup.
 
-Do not treat this PR as evidence that the cloud deployment is complete.
+This is a single-user learning demo accessed through IAM-authorized AgentCore calls, not a multi-user production service.
 
-## Preflight review: 2026-11-21
+## Verification evidence
 
-Read-only AWS inspection confirmed:
+- 62 Python unit tests passed.
+- CDK compilation, source staging, and dependency-lock checks passed.
+- All 113 installed package versions in the release ZIP matched uv.lock.
+- ZIP inspection excluded student_progress.json and environment files and retained the question bank.
+- Local Claude study, exam/progress, lab-generation, and real-resource checks passed.
+- The deployed smoke test independently compared an exam's saved S3 score with the question bank.
+- After stopping the original runtime session, a fresh session read completed progress from S3.
+- Deployed lab checks passed: S3 3/3, Lambda 5/5, IAM 5/5.
+- Generated smoke object versions, including the interrupted initial attempt's record, were removed. No user history existed in the new bucket at cleanup.
+- Ordinary terminal progress retrieval subsequently reported zero exams.
 
-- The CloudFormation stack is `UPDATE_COMPLETE` and still references the CDK bootstrap execution role.
-- AgentCore Runtime is `READY`, version `1`, with its code last updated on 2026-11-12.
-- The deployed runtime has no `AWS_STUDY_ACCOUNT_ID` environment variable.
-- The deployed identity policy still allows broad Bedrock model/profile invocation; it is not the Claude-only policy in the repository.
-- The runtime boundary is still version `v1`. Neither the inspected inline policy nor that boundary includes the lab verifier actions.
+## Applied controls
 
-Local validation now includes actual Claude tool calls against existing S3, Lambda, and IAM labs: 3/3, 5/5, and 5/5. This used `study-coach-sso`, not the runtime role, and does not establish the runtime's effective permissions.
+The runtime identity policy and active boundary restrict inference to the approved Claude profile and its six EU destinations. Lab reads are scoped to the designated S3 bucket, Lambda function, and IAM role. Progress access permits list/read/write only under progress/exams/; the runtime has no progress-delete permission.
 
-### Build findings
+The progress bucket has versioning, SSE-S3, blocked SSE-C, all four Block Public Access settings, BucketOwnerEnforced ownership, ABAC, and an HTTPS-only policy. It is retained on stack deletion. No additional access-log bucket or data-event trail was requested.
 
-- AgentCore CLI `1.0.2` supports `agentcore build`. It does not expose `validate`, `deploy --dry-run`, or `deploy --diff`; check `--help` before following commands from a different CLI version.
-- A fresh CodeZip build succeeded, but originally included local `data/student_progress.json`. The source-staging fix on `fix/codezip-source` excludes unlisted files. Its regression test and rebuilt ZIP inspection passed: progress and `.env` files were absent; the entrypoint and question bank were present. Merge that fix before building a deployment artifact.
-- The ZIP contained `strands-agents 1.64.0` and `bedrock-agentcore 1.26.1` during inspection. The installed packager uses `uv pip install -r pyproject.toml`, not a locked `uv sync`; pinning Strands alone does not make every dependency reproducible. Review dependency resolution before declaring CodeZip drift resolved.
+The scoped CloudFormation role permits existing runtime/role updates, management of this progress bucket, reading the exact bootstrap SSM parameter, and read/decrypt access to the approved new/rollback CodeZip objects. KMS access is constrained to the assets key through S3 and the assets encryption context.
 
-### Remaining work before deployment
+CDK explicitly selects the scoped execution role. Its deployment action role has the corresponding project-specific pass-role grant for CloudFormation.
 
-1. Add scoped lab-read permissions to both the runtime identity policy and the permissions boundary. Verify allowed lab access and denied access to unrelated resources; the current Claude-only boundary draft also lacks lab permissions.
-2. Configure the expected account ID for the runtime. Verify the Bedrock model and region configuration in the synthesized template.
-3. Address progress storage for the intended deployment: local JSON is not durable cloud storage, and the in-memory exam store is not a multi-user backend.
-4. Verify update and rollback permissions for the dedicated CloudFormation execution role before assigning it to the stack.
-5. Build a clean artifact after the relevant PRs are merged, inspect the final template and ZIP, then deploy and repeat smoke tests using the runtime identity.
+Policy sources:
 
-### Reproduce the lab policy baseline
+- [Execution policy](cloudformation-execution-policy.json).
+- [Active boundary document](runtime-boundary-claude.draft.json), whose legacy filename predates activation.
+- [Generated action baseline](runtime-actions.generated.json); CDK narrows optional actions and resource scope.
+- [CDK pass-role grant](cdk-deployment-passrole.json).
 
-IAM Policy Autopilot `0.4.0` identified these read-only actions from the application: `s3:ListBucket`, `s3:GetBucketVersioning`, `s3:GetBucketPublicAccessBlock`, `s3:GetEncryptionConfiguration`, `lambda:GetFunctionConfiguration`, `iam:GetRole`, `iam:GetRolePolicy`, `iam:ListRolePolicies`, and `iam:ListAttachedRolePolicies`.
+## Release and recovery record
 
-From the repository root, replace the account placeholder with the expected account:
+The first change-set request exposed missing SSM bootstrap-parameter access. The first runtime update then exposed missing CodeZip access for the restricted deployment caller. Resource-specific S3 and KMS permissions corrected that dependency.
 
-```powershell
-uvx iam-policy-autopilot@0.4.0 generate-policies "$PWD/app/agent/practice.py" "$PWD/app/agent/lambda_lab.py" "$PWD/app/agent/iam_lab.py" --region eu-central-1 --account "<12-digit-account-id>" --service-hints s3 lambda iam --pretty
-```
+Rollback completed successfully. The new bucket had been retained, so it was imported back into the same stack. The final update changed the runtime in place and completed successfully.
 
-This produces a baseline without uploading a policy. Its resource patterns are broad because the code accepts resource names at runtime; scope them to the designated lab resources before attaching anything. No runtime policy, boundary version, or CloudFormation execution role was changed during this preflight review.
+Boundary v2 was transitional; v3 is final. Earlier versions and the prior code artifact remain as recovery material. The pre-deployment template/policy backup is kept locally in ignored agentcore/.cache/deployment-backup.json.
+
+AgentCore CLI 1.0.2 was used. Its build command is agentcore build; it does not expose validate, deploy --dry-run, or deploy --diff. Review installed CLI flags and the real change set for another release.
+
+Refresh the explicit new/rollback ZIP allowlist for future artifacts. A local build does not update AWS.
+
+## Scope limits
+
+Completed results are durable; active exams remain process-local. Multi-user authentication/data isolation, a web interface, and extra labs are later extensions. Shared S3 history is for this single-user demo, not high-volume analytics.
