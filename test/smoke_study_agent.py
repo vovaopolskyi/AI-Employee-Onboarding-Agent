@@ -1,4 +1,6 @@
 import argparse
+import json
+import os
 import sys
 import tempfile
 from pathlib import Path
@@ -25,6 +27,26 @@ def tool_calls(agent, since=0):
         for block in message.get("content", [])
         if "toolUse" in block
     ]
+
+
+def tool_outputs(agent, since=0):
+    names = {
+        block["toolUse"]["toolUseId"]: block["toolUse"]["name"]
+        for message in agent.messages[since:]
+        for block in message.get("content", [])
+        if "toolUse" in block
+    }
+    outputs = {}
+    for message in agent.messages[since:]:
+        for block in message.get("content", []):
+            if "toolResult" not in block:
+                continue
+            result = block["toolResult"]
+            require(result.get("status") != "error", "Tool execution failed")
+            for content in result.get("content", []):
+                if "text" in content:
+                    outputs[names[result["toolUseId"]]] = json.loads(content["text"])
+    return outputs
 
 
 def check_study_materials(agent):
@@ -108,11 +130,52 @@ def check_exam(agent):
             EXAMS.pop(created_session, None)
 
 
+def check_labs(agent):
+    before = len(agent.messages)
+    agent(
+        "Give me the three hands-on labs. Call generate_lab_task for S3, "
+        "generate_lambda_lab_task, and generate_iam_lab_task. Call all three, "
+        "then return only each lab's title. Do not create any AWS resources."
+    )
+    expected = {
+        "generate_lab_task": "s3-secure-bucket",
+        "generate_lambda_lab_task": "lambda-basic-config",
+        "generate_iam_lab_task": "iam-least-privilege",
+    }
+    outputs = tool_outputs(agent, before)
+    for name, lab_id in expected.items():
+        require(outputs.get(name, {}).get("lab_id") == lab_id,
+                f"Missing or wrong lab returned by {name}")
+    print("PASS: S3, Lambda, and IAM lab generation")
+
+    # Keep this smoke test independent of real student resources and permissions.
+    with patch.dict(os.environ, {"AWS_STUDY_ACCOUNT_ID": ""}):
+        before = len(agent.messages)
+        agent(
+            "Now call all three read-only verification tools: verify_lab_task "
+            "with bucket_name study-coach-lab-smoke, verify_lambda_lab_task "
+            "with function_name study-coach-lab-smoke, and verify_iam_lab_task "
+            "with role_name study-coach-lab-s3-reader. Even if one reports a "
+            "configuration error, call the other two and summarize the errors. "
+            "Do not create or change any resources."
+        )
+    outputs = tool_outputs(agent, before)
+    for name in ("verify_lab_task", "verify_lambda_lab_task", "verify_iam_lab_task"):
+        require(outputs.get(name, {}).get("error") ==
+                "AWS_STUDY_ACCOUNT_ID is not configured",
+                f"Expected a missing-account configuration error from {name}")
+        require("score" not in outputs[name],
+                "Missing configuration must not be reported as a graded lab")
+    print("PASS: all lab verifiers report missing account configuration")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Live Bedrock checks; requires AWS credentials and incurs inference costs."
     )
-    parser.add_argument("--scenario", choices=("study", "exam", "all"), default="study")
+    parser.add_argument(
+        "--scenario", choices=("study", "exam", "labs", "all"), default="study"
+    )
     args = parser.parse_args()
 
     with tempfile.TemporaryDirectory(prefix="study-coach-smoke-") as directory:
@@ -124,6 +187,9 @@ def main():
                 if args.scenario in ("exam", "all"):
                     agent = _get_agent(str(uuid4()), "smoke-test-user")
                     check_exam(agent)
+                if args.scenario in ("labs", "all"):
+                    agent = _get_agent(str(uuid4()), "smoke-test-user")
+                    check_labs(agent)
             finally:
                 _get_agent.cache_clear()
 
