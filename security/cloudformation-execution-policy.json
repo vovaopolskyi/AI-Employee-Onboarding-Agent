@@ -68,6 +68,38 @@
       "Effect": "Allow",
       "Action": "ssm:GetParameters",
       "Resource": "arn:aws:ssm:eu-central-1:054776129200:parameter/cdk-bootstrap/hnb659fds/version"
+    },
+    {
+      "Sid": "ReadRuntimeArtifacts",
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": [
+        "arn:aws:s3:::cdk-hnb659fds-assets-054776129200-eu-central-1/e94d7a3b93bfc576bbd29399560670fc49a3535667b708d690b8fcb2e037735e.zip",
+        "arn:aws:s3:::cdk-hnb659fds-assets-054776129200-eu-central-1/1cd44e4cb2cf89cee0c0476b88414b1510a8182745ec02122885c1018f56d04e.zip"
+      ]
+    },
+    {
+      "Sid": "ReadAssetsBucketLocation",
+      "Effect": "Allow",
+      "Action": "s3:GetBucketLocation",
+      "Resource": "arn:aws:s3:::cdk-hnb659fds-assets-054776129200-eu-central-1"
+    },
+    {
+      "Sid": "DecryptRuntimeArtifactsViaS3",
+      "Effect": "Allow",
+      "Action": "kms:Decrypt",
+      "Resource": "arn:aws:kms:eu-central-1:054776129200:key/ef7b98a8-af86-4168-aa62-5c26c26bc3a2",
+      "Condition": {
+        "StringEquals": {
+          "kms:ViaService": "s3.eu-central-1.amazonaws.com"
+        },
+        "StringLike": {
+          "kms:EncryptionContext:aws:s3:arn": [
+            "arn:aws:s3:::cdk-hnb659fds-assets-054776129200-eu-central-1",
+            "arn:aws:s3:::cdk-hnb659fds-assets-054776129200-eu-central-1/*"
+          ]
+        }
+      }
     }
   ]
 }
