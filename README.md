@@ -1,4 +1,4 @@
-# AWS AI Certification Study Coach
+# AI Employee Onboarding & Knowledge Agent
 
 A Python study assistant using Strands Agents, Claude Haiku 4.5 on Amazon Bedrock, and Amazon Bedrock AgentCore.
 
